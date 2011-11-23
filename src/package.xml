@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>*</members>
+        <members>Chatty2_ChattyMain</members>
+        <members>Chatty2_Comm</members>
+        <members>Chatty2_Contants</members>
+        <members>Chatty2_Controller</members>
+        <members>ChattyResponder</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -18,15 +22,21 @@
     </types>
     <types>
         <members>*</members>
+        <name>CustomSite</name>
+    </types>
+    <types>
+        <members>*</members>
         <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Thing_Images</members>
+        <members>Thing_Images/Chatty_Happy.png</members>
+        <members>Thing_Images/Chatty_Teeth.jpg</members>
+        <name>Document</name>
     </types>
     <types>
         <members>ApexDevNet</members>
         <name>RemoteSiteSetting</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>StaticResource</name>
     </types>
     <version>23.0</version>
 </Package>

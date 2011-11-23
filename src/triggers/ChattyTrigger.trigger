@@ -1,4 +1,8 @@
 trigger ChattyTrigger on FeedItem (after insert) {
+
+
+    system.debug('FEEDITEMTRIGGER');
+
 	list<FeedItem> theItems = new list<FeedItem>();
 		
 	for(FeedItem f :trigger.new){

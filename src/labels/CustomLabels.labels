@@ -1,3 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata"/>
-
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>CommunicationError</fullName>
+        <categories>Chatty2</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CommunicationError</shortDescription>
+        <value>I tried to help, but I&apos;m speechless. Check your communication protocols for errors.</value>
+    </labels>
+    <labels>
+        <fullName>UnknownCommand</fullName>
+        <categories>Chatty2</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>UnknownCommand</shortDescription>
+        <value>I&apos;m sorry, but I don&apos;t know what you&apos;re talking about. You might want to try a coherent sentence... or one of the available Commands.</value>
+    </labels>
+    <labels>
+        <fullName>VulgarLanguage</fullName>
+        <categories>Chatty2</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>VulgarLanguage</shortDescription>
+        <value>Whoa, take it easy champ. I know complete thoughts are tough for you, but that&apos;s no reason to start using vulgar words.</value>
+    </labels>
+</CustomLabels>

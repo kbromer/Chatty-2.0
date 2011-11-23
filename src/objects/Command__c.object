@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>true</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <fields>
+        <fullName>Actions__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>What action to perform when the Command Text is used. Options are to toggle the object on/off (if applicable), or to return a reading of the object&apos;s status</inlineHelpText>
+        <label>Actions</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Toggle On</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Toggle Off</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Return Status</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Command_Text__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The text (case insensitive) that triggers this command when used in Chatter</inlineHelpText>
+        <label>Command Text</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Response_Text__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The optional text Chatty uses to respond when the given command is successfully completed.</inlineHelpText>
+        <label>Response Text</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Status_Formula__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Optional formula that causes this Command to fire when its Thing&apos;s status meets the formula criteria.</inlineHelpText>
+        <label>Status Formula</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Thing__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <inlineHelpText>The Thing this Command controls (if possible) or provides a reading for (if passive)</inlineHelpText>
+        <label>Thing</label>
+        <referenceTo>Thing__c</referenceTo>
+        <relationshipLabel>Commands</relationshipLabel>
+        <relationshipName>Commands</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <label>Command</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>Command-{00000000}</displayFormat>
+        <label>Command</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Commands</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Valid_Status_Formula</fullName>
+        <active>true</active>
+        <description>Checks that a text formula includes a boolean value for evaluation</description>
+        <errorConditionFormula>NOT(
+OR(
+BEGINS( Status_Formula__c, &quot;&gt;&quot;),
+BEGINS(Status_Formula__c, &quot;&lt;&quot;),
+BEGINS(Status_Formula__c, &quot;!=&quot;),
+BEGINS(Status_Formula__c, &quot;=&quot;)
+))</errorConditionFormula>
+        <errorDisplayField>Status_Formula__c</errorDisplayField>
+        <errorMessage>A status formula must begin with one of the following operators:
+&gt;, &lt;, =, !=</errorMessage>
+    </validationRules>
+</CustomObject>
