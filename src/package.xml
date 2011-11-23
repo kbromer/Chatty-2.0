@@ -3,7 +3,7 @@
     <types>
         <members>Chatty2_ChattyMain</members>
         <members>Chatty2_Comm</members>
-        <members>Chatty2_Contants</members>
+        <members>Chatty2_Constants</members>
         <members>Chatty2_Controller</members>
         <members>ChattyResponder</members>
         <name>ApexClass</name>
