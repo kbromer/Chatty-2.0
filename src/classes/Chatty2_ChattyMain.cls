@@ -7,6 +7,7 @@ public with sharing class Chatty2_ChattyMain {
 	list<Thing__c> thinglist = new list<Thing__c>();
 	Chatty2_Settings__c ChattySettings = Chatty2_Constants.getChattySettings();
 	string ChattyName = Chatty2_Constants.getChattyName();
+	id ChattyId = Chatty2_Constants.getChattySettings().Chatty2_User__c;
 	
 	/*** CONSTRUCTORS ***/ 
 	
@@ -16,11 +17,15 @@ public with sharing class Chatty2_ChattyMain {
 	//handle feeditems with mentions
 	public Chatty2_ChattyMain(list<FeedItem> item_list){
 		getUser(); 
-        //if we're @ mentioning the chatty user
+		//if we're @ mentioning the chatty user
         for (FeedItem f : item_list){
-        	if (f.Body.startsWith('@' + Chatty2_Constants.ChattyName)){
+            system.debug('FEEDITEM PARENTID: ' + f.ParentId);
+            system.debug('FEEDITEM BODY: ' + f.Body);
+        
+        
+        	if (f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId){
                 cmlist.add(new ChattyMessage(f, this));
-        	}
+        	} 
         }
         if (!cmlist.isEmpty()){
             loadCommandsandThings();
@@ -134,7 +139,7 @@ public with sharing class Chatty2_ChattyMain {
     	public void executeResponse(){
             
             list<FeedComment> responsepostlist = new list<FeedComment>();
-            
+            integer matchingcommandcount = 0;
             //i'm torn, i could really skip the loading of the commands and sosl
             //for matches instead, but could i vary the command type in that scenario?
             //starts w/ versus contains? i'd need to do that in apex
@@ -150,6 +155,7 @@ public with sharing class Chatty2_ChattyMain {
             for (Command__c c : mydad.commandlist){
                 if (c.Match_Type__c == 'Starts With'){
                     if(messagebody.startsWith(c.Command_Text__c)){
+                        matchingcommandcount++;
                         responsepostlist.add(
                         new FeedComment(
                         FeedItemId = ParentId,
@@ -157,15 +163,12 @@ public with sharing class Chatty2_ChattyMain {
                         CommentBody = c.Response_Text__c
                         ));                                        	
                     	
-                    }                     	
-                	
-                
-                
+                    }
                 }
                 
                 else if (c.Match_Type__c == 'Contains'){
-                	
                 	if(messagebody.contains(c.Command_Text__c)){
+                        matchingcommandcount++;
                         responsepostlist.add(
                         new FeedComment(
                         FeedItemId = ParentId,
@@ -177,13 +180,15 @@ public with sharing class Chatty2_ChattyMain {
                 	
                 	
                 }
-                        	
-            	
             }
             
-            if(!responsepostlist.isEmpty()) insert responsepostlist; 
-                        
-    	
+            if(!responsepostlist.isEmpty()) insert responsepostlist;
+            else{
+            	insert new FeedComment(FeedItemId = ParentId, 
+            	CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
+            	CommentBody = Label.UnknownCommand 
+            	);
+            }
     	
     	}
     	
