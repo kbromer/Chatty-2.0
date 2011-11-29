@@ -1,0 +1,1 @@
+<apex:page controller="Chatty2_Controller" showHeader="false" contentType="application/json"></apex:page>
