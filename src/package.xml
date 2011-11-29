@@ -9,6 +9,10 @@
         <name>ApexClass</name>
     </types>
     <types>
+        <members>Chatty2_Listener</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
         <members>*</members>
         <name>ApexTrigger</name>
     </types>
@@ -17,7 +21,9 @@
         <name>CustomLabels</name>
     </types>
     <types>
-        <members>*</members>
+        <members>Chatty2_Settings__c</members>
+        <members>Command__c</members>
+        <members>Thing__c</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -33,10 +39,6 @@
         <members>Thing_Images/Chatty_Happy.png</members>
         <members>Thing_Images/Chatty_Teeth.jpg</members>
         <name>Document</name>
-    </types>
-    <types>
-        <members>ApexDevNet</members>
-        <name>RemoteSiteSetting</name>
     </types>
     <version>23.0</version>
 </Package>
