@@ -61,6 +61,17 @@
         <unique>true</unique>
     </fields>
     <fields>
+        <fullName>Thing_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Thing Status</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>true</trackFeedHistory>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Thing_Type__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>What type of Thing is this? Toggle Things can be on or off. Passive Things provide reading or output based on Chatty commands.</inlineHelpText>

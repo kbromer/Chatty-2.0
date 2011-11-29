@@ -71,6 +71,35 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Confirm_Reponse__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Optional response posted once action confirmation is received from Arduino</inlineHelpText>
+        <label>Confirm Reponse</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Match_Type__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Determine how the Chatter message pattern is matched to the available commands. &quot;Starts With&quot; will match only for messages that begin with the command text (excluding any @metions to Chatty).  Contains will match the command text anywhere in a valid post.</inlineHelpText>
+        <label>Match Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Starts With</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Contains</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Response_Text__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>The optional text Chatty uses to respond when the given command is successfully completed.</inlineHelpText>
@@ -105,6 +134,10 @@
     <label>Command</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Actions__c</columns>
+        <columns>Command_Text__c</columns>
+        <columns>Response_Text__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -121,13 +154,15 @@
         <fullName>Valid_Status_Formula</fullName>
         <active>true</active>
         <description>Checks that a text formula includes a boolean value for evaluation</description>
-        <errorConditionFormula>NOT(
+        <errorConditionFormula>IF(NOT(ISBLANK( Status_Formula__c)),
+NOT(
 OR(
 BEGINS( Status_Formula__c, &quot;&gt;&quot;),
 BEGINS(Status_Formula__c, &quot;&lt;&quot;),
 BEGINS(Status_Formula__c, &quot;!=&quot;),
 BEGINS(Status_Formula__c, &quot;=&quot;)
-))</errorConditionFormula>
+))
+, false)</errorConditionFormula>
         <errorDisplayField>Status_Formula__c</errorDisplayField>
         <errorMessage>A status formula must begin with one of the following operators:
 &gt;, &lt;, =, !=</errorMessage>
