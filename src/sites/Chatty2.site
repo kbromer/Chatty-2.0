@@ -12,7 +12,7 @@
     <fileNotFoundPage>FileNotFound</fileNotFoundPage>
     <genericErrorPage>Exception</genericErrorPage>
     <inMaintenancePage>InMaintenance</inMaintenancePage>
-    <indexPage>TalkToChatty</indexPage>
+    <indexPage>Chatty2_Listener</indexPage>
     <masterLabel>Chatty2</masterLabel>
     <requireInsecurePortalAccess>false</requireInsecurePortalAccess>
     <siteAdmin>kbromer@chatty2.com</siteAdmin>
