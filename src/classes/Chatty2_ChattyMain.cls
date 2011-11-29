@@ -25,7 +25,7 @@ public with sharing class Chatty2_ChattyMain {
         
         	if (f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId){
                 cmlist.add(new ChattyMessage(f, this));
-        	} 
+        	}
         }
         if (!cmlist.isEmpty()){
             loadCommandsandThings();
