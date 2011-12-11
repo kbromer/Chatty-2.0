@@ -38,6 +38,16 @@
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <fields>
+        <fullName>Action_Confirmation__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Optional response posted once action confirmation is received from Arduino</inlineHelpText>
+        <label>Action Confirmation</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Actions__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>What action to perform when the Command Text is used. Options are to toggle the object on/off (if applicable), or to return a reading of the object&apos;s status</inlineHelpText>
@@ -71,14 +81,17 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
-        <fullName>Confirm_Reponse__c</fullName>
+        <fullName>Formula_Response__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
-        <inlineHelpText>Optional response posted once action confirmation is received from Arduino</inlineHelpText>
-        <label>Confirm Reponse</label>
-        <length>32768</length>
+        <inlineHelpText>The command to execute when the status formula is true.</inlineHelpText>
+        <label>Formula Response</label>
+        <referenceTo>Command__c</referenceTo>
+        <relationshipLabel>Commands</relationshipLabel>
+        <relationshipName>Responses</relationshipName>
+        <required>false</required>
         <trackFeedHistory>false</trackFeedHistory>
-        <type>LongTextArea</type>
-        <visibleLines>3</visibleLines>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Match_Type__c</fullName>
