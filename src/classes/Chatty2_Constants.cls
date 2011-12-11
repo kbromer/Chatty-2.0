@@ -2,6 +2,8 @@ public with sharing class Chatty2_Constants {
 	
     public static Chatty2_Settings__c ChattySettings;
     public static string ChattyName;
+    public static list<User_Thing_URL__c> UserURLs;
+    
     
     public static Chatty2_Settings__c getChattySettings(){
         
@@ -26,5 +28,17 @@ public with sharing class Chatty2_Constants {
         }
         return ChattyName;
     }
+    
+    public static list<User_Thing_URL__c> getUserURLs(){
+        if (UserURLs == null){
+            map<string, User_Thing_URL__c> userURLMap = User_Thing_URL__c.getAll();	
+        	for (string s : userURLMap.keySet()){
+                UserURLs.add(userURLMap.get(s));        		
+        	}
+        }    	
+    	return UserURLs;
+    }
+    
+    
 
 }
