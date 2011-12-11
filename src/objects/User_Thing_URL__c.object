@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>List</customSettingsType>
+    <customSettingsVisibility>Public</customSettingsVisibility>
+    <description>The User ID and associated endpoint for the physical &quot;thing&quot; array for Chatty to communicate with. Different users can have different physical endpoints.</description>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>URL__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The URL for the Chatty callout for this user.</inlineHelpText>
+        <label>URL</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>User_ID__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The ID of the User for this physical address</inlineHelpText>
+        <label>User ID</label>
+        <length>18</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>User Thing URL</label>
+</CustomObject>
