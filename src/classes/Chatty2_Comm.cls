@@ -22,10 +22,14 @@ public with sharing class Chatty2_Comm {
         	
         }
         else{
-        	//THROW ERROR
+        	throw new Chatty2_Constants.ChattyException();
         }	
-		
 	}
+	
+	
+	
+	
+	
 	
 
 }
