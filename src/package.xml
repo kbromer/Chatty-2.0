@@ -5,6 +5,7 @@
         <members>Chatty2_Comm</members>
         <members>Chatty2_Constants</members>
         <members>Chatty2_Controller</members>
+        <members>Chatty2_REST</members>
         <members>ChattyResponder</members>
         <name>ApexClass</name>
     </types>
@@ -21,9 +22,7 @@
         <name>CustomLabels</name>
     </types>
     <types>
-        <members>Chatty2_Settings__c</members>
-        <members>Command__c</members>
-        <members>Thing__c</members>
+        <members>*</members>
         <name>CustomObject</name>
     </types>
     <types>
