@@ -9,14 +9,14 @@ global with sharing class Chatty2_REST {
     }
   
     @HttpPost
-    global static String doPost(RestRequest req, RestResponse res, String name,
-        String phone, String website) {
-        Account account = new Account();
-        account.Name = name;
-        account.phone = phone;
-        account.website = website;
-        insert account;
-        return account.Id;
-    }
+    global static String doPost(RestRequest req, RestResponse res, String name) {
+        FeedItem fi = new FeedItem();
+        fi.ParentId = Chatty2_Constants.getChattySettings().Chatty2_User__c;
+        fi.Type = 'TextPost';
+        fi.Body = 'THE INTERNET SAYS: ' + name;
+        fi.CreatedById = Chatty2_Constants.getChattySettings().Chatty2_User__c;
+        insert fi; 
+        return fi.Id;
+    } 
 
 }
