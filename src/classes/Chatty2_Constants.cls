@@ -39,6 +39,6 @@ public with sharing class Chatty2_Constants {
     	return UserURLs;
     }
     
-    
+    public class ChattyException extends Exception {}
 
 }
