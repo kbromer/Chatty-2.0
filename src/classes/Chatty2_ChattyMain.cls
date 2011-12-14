@@ -23,7 +23,7 @@ public with sharing class Chatty2_ChattyMain {
             system.debug('FEEDITEM BODY: ' + f.Body);
         
         
-        	if (f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId){
+        	if ((f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
                 cmlist.add(new ChattyMessage(f, this));
         	}
         }
@@ -35,7 +35,7 @@ public with sharing class Chatty2_ChattyMain {
     public Chatty2_ChattyMain(list<FeedComment> comment_list){
         getUser();
         for (FeedComment f : comment_list){
-            if (f.CommentBody.startsWith('@' + Chatty2_Constants.ChattyName)){
+            if ((f.CommentBody.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
                 cmlist.add(new ChattyMessage(f, this));
             }
         }
@@ -91,9 +91,6 @@ public with sharing class Chatty2_ChattyMain {
             cm.executeResponse();
         }    	
     }
-
-    /*** EXCEPTION METHODS ***/
-    public class ChattyException extends Exception {}
     
     /*** INNER CLASSES ***/
 
@@ -129,7 +126,7 @@ public with sharing class Chatty2_ChattyMain {
                 ParentId = f.Id;    			
     		}
     		else{
-                throw new ChattyException();
+                throw new Chatty2_Constants.ChattyException();
     		}
     	} 
     	
@@ -139,6 +136,7 @@ public with sharing class Chatty2_ChattyMain {
     	public void executeResponse(){
             
             list<FeedComment> responsepostlist = new list<FeedComment>();
+            list<Command__c> commandexecutionlist = new list<Command__c>();
             integer matchingcommandcount = 0;
             //i'm torn, i could really skip the loading of the commands and sosl
             //for matches instead, but could i vary the command type in that scenario?
@@ -156,6 +154,7 @@ public with sharing class Chatty2_ChattyMain {
                 if (c.Match_Type__c == 'Starts With'){
                     if(messagebody.startsWith(c.Command_Text__c)){
                         matchingcommandcount++;
+                        commandexecutionlist.add(c);
                         responsepostlist.add(
                         new FeedComment(
                         FeedItemId = ParentId,
@@ -169,6 +168,7 @@ public with sharing class Chatty2_ChattyMain {
                 else if (c.Match_Type__c == 'Contains'){
                 	if(messagebody.contains(c.Command_Text__c)){
                         matchingcommandcount++;
+                        commandexecutionlist.add(c);
                         responsepostlist.add(
                         new FeedComment(
                         FeedItemId = ParentId,
@@ -190,10 +190,14 @@ public with sharing class Chatty2_ChattyMain {
             	);
             }
     	
-    	}
-    	
+    	   
+    	    //send the commands out for processing
+    	    if (!commandexecutionlist.isEmpty()){
+                for (Command__c c : commandexecutionlist){
+                    Chatty2_Comm c2c = new Chatty2_Comm(c);
+                    c2c.Execute();
+                }   
+    	    }    	
+    	}    	
     }
-
-
-
 }
