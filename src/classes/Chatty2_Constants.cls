@@ -3,6 +3,7 @@ public with sharing class Chatty2_Constants {
     public static Chatty2_Settings__c ChattySettings;
     public static string ChattyName;
     public static list<User_Thing_URL__c> UserURLs;
+    public static map<id, RecordType> commandRecordTypes;
     
     
     public static Chatty2_Settings__c getChattySettings(){
@@ -38,6 +39,15 @@ public with sharing class Chatty2_Constants {
         }    	
     	return UserURLs;
     }
+    
+    public static map<id, RecordType> getCommandRecordTypes(){
+    	if (commandRecordTypes == null){
+            commandRecordTypes = new map<id, RecordType>([select id, Name from RecordType where sobjecttype = 'Command__c']);    		
+    	}
+    	return commandRecordTypes;
+    }
+    
+    
     
     public class ChattyException extends Exception {}
 
