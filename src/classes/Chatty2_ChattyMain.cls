@@ -53,7 +53,7 @@ public with sharing class Chatty2_ChattyMain {
         	system.debug('USER STATUS: ' + u.CurrentStatus);
         	system.debug('CHATTY NAME: ' + Chatty2_Constants.ChattyName);
         	
-        	if (u.CurrentStatus != null && u.CurrentStatus != oldMap.get(u.id).CurrentStatus
+        	if (u.CurrentStatus != null //&& u.CurrentStatus != oldMap.get(u.id).CurrentStatus
         	   && u.CurrentStatus.startsWith('@' + ChattyName)){
                 FeedItem f = [select id, body, createdById, ParentID, createdDate from FeedItem where ParentId = :u.id ORDER BY CreatedDate DESC LIMIT 1];
                 cmlist.add(new ChattyMessage(f, this));
@@ -75,15 +75,15 @@ public with sharing class Chatty2_ChattyMain {
 	private void getUser(){
 		running_user_id = UserInfo.getUserID();
 	}
-	private void loadCommandsandThings(){
-		//sosl live using the message body is also tempting
-		
-        thinglist = [select id from Thing__c where User__c = :running_user_id];
-        commandlist = [select id, Match_Type__c, Command_Text__c, Response_Text__c from Command__c];
+	private void loadCommandsandThings(){		
+        commandlist = [select c.Thing__c, c.Status_Formula__c, c.Response_Text__c, 
+                    c.RecordTypeId, c.Query__c, c.Match_Type__c, c.Id, 
+                    c.Formula_Response__c, c.Command_Text__c, c.Actions__c, 
+                    c.Action_Value__c, c.Action_Confirmation__c, Limit_to_User__c,
+                    c.Query_Parameters__c, c.Query_Limit__c, c.Query_Order_By__c 
+                    From Command__c c];
 	}
 	
-	
-
     /*** PUBLIC METHODS ***/	
 
     public void execute(){
@@ -117,12 +117,12 @@ public with sharing class Chatty2_ChattyMain {
                                                     	       
             if (obj instanceof FeedComment){
             	FeedComment f = (FeedComment)obj;
-                messagebody = f.CommentBody;
+                messagebody = f.CommentBody.toLowerCase();
                 ParentId = f.FeedItemId;
             }	
     		else if (obj instanceof FeedItem){
                 FeedItem f = (FeedItem)obj;
-                messagebody = (string)f.Body;
+                messagebody = (string)f.Body.toLowerCase();
                 ParentId = f.Id;    			
     		}
     		else{
@@ -135,8 +135,13 @@ public with sharing class Chatty2_ChattyMain {
     	//decide how to respond
     	public void executeResponse(){
             
+            //list of feedposts in response to the issued commands
             list<FeedComment> responsepostlist = new list<FeedComment>();
+            //list of valid commands that need some action
             list<Command__c> commandexecutionlist = new list<Command__c>();
+            //list of commands requiring a chatty_comm instance/callout
+            list<Command__c> calloutList = new list<Command__c>();
+           
             integer matchingcommandcount = 0;
             //i'm torn, i could really skip the loading of the commands and sosl
             //for matches instead, but could i vary the command type in that scenario?
@@ -146,58 +151,148 @@ public with sharing class Chatty2_ChattyMain {
             //apex text comprisons
             
             //clean response body of mentions and whitespace
+            messagebody = messagebody.trim();
             messagebody = messagebody.replace('@' + mydad.ChattyName, '');
+            messagebody = messagebody.replace('@' + mydad.ChattyName.toLowerCase(), '');
             messagebody = messagebody.trim();
             system.debug('MESSAGE BODY: ' + messagebody);
+           
             //find all commands where the search text matches
+            //and filter the ones we want to respond to
             for (Command__c c : mydad.commandlist){
-                if (c.Match_Type__c == 'Starts With'){
-                    if(messagebody.startsWith(c.Command_Text__c)){
-                        matchingcommandcount++;
-                        commandexecutionlist.add(c);
-                        responsepostlist.add(
-                        new FeedComment(
-                        FeedItemId = ParentId,
-                        CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
-                        CommentBody = c.Response_Text__c
-                        ));                                        	
-                    	
+                if(c.Command_Text__c != null){   
+            	   string ctext = (c.Command_Text__c.toLowerCase()).trim();  
+            	   system.debug('ctext: ' + ctext);
+            	   system.debug('messagebody: ' + messagebody);
+            	
+                    if (c.Match_Type__c == 'Starts With'){
+                        if(messagebody.startsWith(ctext)){
+                            matchingcommandcount++;
+                            commandexecutionlist.add(c);
+                        }
+                    }                
+                    
+                    else if (c.Match_Type__c == 'Contains'){
+                	    if(messagebody.contains(ctext)){
+                            matchingcommandcount++;
+                            commandexecutionlist.add(c);
+                        }
+                    }
+                    //bad match type
+                    else{
+                        throw new Chatty2_Constants.ChattyException();
                     }
                 }
-                
-                else if (c.Match_Type__c == 'Contains'){
-                	if(messagebody.contains(c.Command_Text__c)){
-                        matchingcommandcount++;
-                        commandexecutionlist.add(c);
+            }//close matching loop
+            
+            //found no matches, so
+            //unrecognized command
+            if(commandexecutionlist.isEmpty()){
+            	insert new FeedComment(FeedItemId = ParentId, 
+                CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
+                CommentBody = Label.UnknownCommand 
+                );
+            }
+            
+            //we have at least one matching command...
+            //decide how to handle the command based on 
+            //type and request
+            else{
+            	map<id, RecordType> commandRecordTypes = Chatty2_Constants.getCommandRecordTypes();
+            	
+            	for (Command__c c : commandexecutionlist){
+                   //if its just chat, simply provide the response
+                    if (commandRecordTypes.get(c.RecordTypeId).Name == 'Chat'){
+                        responsepostlist.add(
+                        new FeedComment(
+                        FeedItemId = ParentId,
+                        CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
+                        CommentBody = c.Response_Text__c));
+                    }
+                    
+                    //if its a query, provide a response to the query
+                    else if (commandRecordTypes.get(c.RecordTypeId).Name == 'Query'){
+                        responsepostList.add(queryResult(c));                     
+                    }
+                    
+                    else if (commandRecordTypes.get(c.RecordTypeId).Name == 'Action'){
                         responsepostlist.add(
                         new FeedComment(
                         FeedItemId = ParentId,
                         CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
                         CommentBody = c.Response_Text__c
-                        ));                                         
+                        ));
                         
-                    }                     
-                	
-                	
+                        calloutlist.add(c);
+                    }
+                    
+                    else if (commandRecordTypes.get(c.RecordTypeId).Name == 'Status'){
+                        calloutlist.add(c);
+                    }
                 }
             }
-            
-            if(!responsepostlist.isEmpty()) insert responsepostlist;
-            else{
-            	insert new FeedComment(FeedItemId = ParentId, 
-            	CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
-            	CommentBody = Label.UnknownCommand 
-            	);
-            }
-    	
-    	   
+        
+            if (!responsepostlist.isEmpty()) insert responsepostlist;
+                           
     	    //send the commands out for processing
-    	    if (!commandexecutionlist.isEmpty()){
-                for (Command__c c : commandexecutionlist){
+    	    if (!calloutlist.isEmpty()){
+                for (Command__c c : calloutlist){
                     Chatty2_Comm c2c = new Chatty2_Comm(c);
                     c2c.Execute();
                 }   
-    	    }    	
-    	}    	
-    }
-}
+    	    }  	        	
+    	}//close executeResponse
+    	
+        private FeedComment queryResult(Command__c c){
+            
+            FeedComment f = new FeedComment();
+            f.FeedItemId = ParentId; 
+            f.CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c;
+            
+            if(c.Query__c != null){
+                                                                                    
+                string soql = '';
+                soql += c.Query__c;
+                if (c.Limit_to_User__c){
+                    soql += ' WHERE OwnerId = \'' + UserInfo.getUserID() + '\'';
+                }
+                
+                if (c.Query_Parameters__c != null){
+                    if (c.Limit_to_User__c){
+                        soql+= ' AND ';
+                    }                        
+                    else{
+                        soql += ' WHERE ';
+                    }
+                    soql += c.Query_Parameters__c;
+                }
+                            
+                if (c.Query_Order_By__c != null){
+                    soql += ' ORDER BY ' + c.Query_Order_By__c + ' ';
+                }
+                
+                soql += ' LIMIT ' + c.Query_Limit__c;
+                system.debug('QUERY: ' + soql);
+                list<sobject> objectList = new list<sobject>(); 
+                objectList = database.query(soql);
+                string queryresponse = ' Your requested information: \n ';
+                string baseurl = system.Url.getSalesforceBaseUrl().toExternalForm();
+                
+                //write body
+                for (sobject obj : objectList){
+                    queryresponse += obj.get('Name') + '\n(' + baseurl + '/' + obj.get('id') + ')' + '\n';
+                }           
+                            
+                f.CommentBody = queryresponse;
+            }
+            
+            //null query for this command                                                
+            else{
+                f.CommentBody = Label.NoQueryResults;
+            }
+    		
+    		return f;
+    		
+        }//close query response
+    }//close ChattyMessage
+}//close Chatty2_Main
