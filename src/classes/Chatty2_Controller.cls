@@ -3,7 +3,7 @@ public without sharing class Chatty2_Controller {
     
     public void myaction(){
         map<string, string> paramMap = ApexPages.currentPage().getParameters();
-    
+        
         if (paramMap.get('NName') != null)
             doCallout(paramMap.get('NName'));
     }    
@@ -20,6 +20,9 @@ public without sharing class Chatty2_Controller {
         endpoint = endpoint.substring(0, x);
         system.debug('PRE ENDPOINT: ' + endpoint);
         
+        //incoming IP        
+        String ipAddress = ApexPages.currentPage().getHeaders().get('X-Salesforce-SIP');
+                
         Http h = new http();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(endpoint + '/services/apexrest/Chatty2');
