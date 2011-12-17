@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>BadArrayAddress</fullName>
+        <categories>Chatty2</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BadArrayAddress</shortDescription>
+        <value>How am I supposed to know what to do if you don&apos;t tell me where it is? Your Thing referenced in this Command needs a valid address.</value>
+    </labels>
+    <labels>
         <fullName>CommunicationError</fullName>
         <categories>Chatty2</categories>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>CommunicationError</shortDescription>
         <value>I tried to help, but I&apos;m speechless. Check your communication protocols for errors.</value>
+    </labels>
+    <labels>
+        <fullName>NoQueryResults</fullName>
+        <categories>Chatty2</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>NoQueryResults</shortDescription>
+        <value>Sorry, your query returned no results.</value>
     </labels>
     <labels>
         <fullName>UnknownCommand</fullName>
