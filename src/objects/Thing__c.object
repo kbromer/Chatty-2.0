@@ -38,6 +38,31 @@
     <enableHistory>true</enableHistory>
     <enableReports>true</enableReports>
     <fields>
+        <fullName>Array__c</fullName>
+        <externalId>false</externalId>
+        <label>Array</label>
+        <referenceTo>Array__c</referenceTo>
+        <relationshipLabel>Things</relationshipLabel>
+        <relationshipName>Things</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Component_Type__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>The manufacturer type for translation purposes</inlineHelpText>
+        <label>Component Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Description__c</fullName>
         <externalId>false</externalId>
         <label>Description</label>
@@ -48,41 +73,40 @@
         <visibleLines>25</visibleLines>
     </fields>
     <fields>
-        <fullName>Thing_Name__c</fullName>
-        <caseSensitive>false</caseSensitive>
+        <fullName>Short_Description__c</fullName>
+        <externalId>false</externalId>
+        <label>Short Description</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Thing_Address__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>The name of the Thing. This must be unique and is referenced by the remote Things when calling into Chatty 2.0</inlineHelpText>
-        <label>Thing Name</label>
+        <label>Thing Address</label>
         <length>255</length>
         <required>true</required>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
-        <type>Text</type>
-        <unique>true</unique>
-    </fields>
-    <fields>
-        <fullName>Thing_Status__c</fullName>
-        <externalId>false</externalId>
-        <label>Thing Status</label>
-        <length>255</length>
-        <required>false</required>
-        <trackFeedHistory>true</trackFeedHistory>
-        <trackHistory>true</trackHistory>
         <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
         <fullName>Thing_Type__c</fullName>
         <externalId>false</externalId>
-        <inlineHelpText>What type of Thing is this? Toggle Things can be on or off. Passive Things provide reading or output based on Chatty commands.</inlineHelpText>
+        <inlineHelpText>What type of Thing is this? Digital Things can be on or off. Analog Things provide reading or output based on Chatty commands.</inlineHelpText>
         <label>Thing Type</label>
         <picklist>
             <picklistValues>
-                <fullName>Toggle</fullName>
+                <fullName>Digital</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Passive</fullName>
+                <fullName>Analog</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -91,24 +115,11 @@
         <trackHistory>false</trackHistory>
         <type>Picklist</type>
     </fields>
-    <fields>
-        <fullName>User__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <externalId>false</externalId>
-        <label>User</label>
-        <referenceTo>User</referenceTo>
-        <relationshipName>Things</relationshipName>
-        <required>false</required>
-        <trackFeedHistory>false</trackFeedHistory>
-        <trackHistory>false</trackHistory>
-        <type>Lookup</type>
-    </fields>
     <label>Thing</label>
     <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
-        <columns>Thing_Name__c</columns>
-        <columns>User__c</columns>
+        <columns>Thing_Address__c</columns>
         <columns>Description__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
@@ -122,12 +133,5 @@
     </nameField>
     <pluralLabel>Things</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
-    <validationRules>
-        <fullName>User_Required</fullName>
-        <active>true</active>
-        <errorConditionFormula>ISBLANK( User__c )</errorConditionFormula>
-        <errorDisplayField>User__c</errorDisplayField>
-        <errorMessage>A user is required for entering Things</errorMessage>
-    </validationRules>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>
