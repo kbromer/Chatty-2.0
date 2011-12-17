@@ -223,10 +223,21 @@ public with sharing class Chatty2_ChattyMain {
                         CommentBody = c.Response_Text__c
                         ));
                         
+                        
+                        /*  NEED TO FIGURE OUT HOW TO CHECK THIS EASILY AND WHERE
+                        Thing__c t = [select t.Array__r.id from Thing__c where t.id = :c.Thing__c];
+                        integer x = [select count() from Array_Owner__c where User__c = :UserInfo.getUserID() and Array__c = :t.Array__r.id];
+                        */
                         calloutlist.add(c);
                     }
                     
                     else if (commandRecordTypes.get(c.RecordTypeId).Name == 'Status'){
+                        responsepostlist.add(
+                        new FeedComment(
+                        FeedItemId = ParentId,
+                        CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
+                        CommentBody = c.Response_Text__c
+                        ));                        
                         calloutlist.add(c);
                     }
                 }
@@ -235,12 +246,13 @@ public with sharing class Chatty2_ChattyMain {
             if (!responsepostlist.isEmpty()) insert responsepostlist;
                            
     	    //send the commands out for processing
+    	    list<FeedComment> callOutResponses = new list<FeedComment>();
     	    if (!calloutlist.isEmpty()){
                 for (Command__c c : calloutlist){
-                    Chatty2_Comm c2c = new Chatty2_Comm(c);
-                    c2c.Execute();
+                    Chatty2_Comm c2c = new Chatty2_Comm(c, ParentID);
+                    c2c.Execute();                    
                 }   
-    	    }  	        	
+    	    } 	        	
     	}//close executeResponse
     	
         private FeedComment queryResult(Command__c c){
