@@ -48,6 +48,17 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Action_Value__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>If setting a non-boolean status, the value for that status</inlineHelpText>
+        <label>Action Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Actions__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>What action to perform when the Command Text is used. Options are to toggle the object on/off (if applicable), or to return a reading of the object&apos;s status</inlineHelpText>
@@ -63,6 +74,10 @@
             </picklistValues>
             <picklistValues>
                 <fullName>Return Status</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Set Status</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -94,6 +109,15 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>Limit_to_User__c</fullName>
+        <defaultValue>true</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>Limit the query results only to those records owned by the calling user.</inlineHelpText>
+        <label>Limit to User</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Match_Type__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>Determine how the Chatter message pattern is matched to the available commands. &quot;Starts With&quot; will match only for messages that begin with the command text (excluding any @metions to Chatty).  Contains will match the command text anywhere in a valid post.</inlineHelpText>
@@ -111,6 +135,66 @@
         </picklist>
         <trackFeedHistory>false</trackFeedHistory>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Query_Limit__c</fullName>
+        <externalId>false</externalId>
+        <label>Query Limit</label>
+        <picklist>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>4</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Query_Order_By__c</fullName>
+        <externalId>false</externalId>
+        <label>Query Order By</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Query_Parameters__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Query parameters including WHERE, LIMITS and ORDER BY</inlineHelpText>
+        <label>Query Parameters</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Query__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>SOQL results to be displayed on request</inlineHelpText>
+        <label>Query</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>Response_Text__c</fullName>
@@ -147,10 +231,10 @@
     <label>Command</label>
     <listViews>
         <fullName>All</fullName>
-        <columns>NAME</columns>
-        <columns>Actions__c</columns>
         <columns>Command_Text__c</columns>
+        <columns>Match_Type__c</columns>
         <columns>Response_Text__c</columns>
+        <columns>RECORDTYPE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -161,8 +245,239 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Commands</pluralLabel>
+    <recordTypeTrackFeedHistory>false</recordTypeTrackFeedHistory>
+    <recordTypes>
+        <fullName>Action</fullName>
+        <active>true</active>
+        <description>Controls on/off or scaled real world things</description>
+        <label>Action</label>
+        <picklistValues>
+            <picklist>Actions__c</picklist>
+            <values>
+                <fullName>Return Status</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Set Status</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle Off</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle On</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Match_Type__c</picklist>
+            <values>
+                <fullName>Contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Starts With</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Query_Limit__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Chat</fullName>
+        <active>true</active>
+        <description>Request and responses from Chatty</description>
+        <label>Chat</label>
+        <picklistValues>
+            <picklist>Actions__c</picklist>
+            <values>
+                <fullName>Return Status</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle Off</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle On</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Match_Type__c</picklist>
+            <values>
+                <fullName>Contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Starts With</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Query_Limit__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Query</fullName>
+        <active>true</active>
+        <description>Performs a dynamic query and returns the results</description>
+        <label>Query</label>
+        <picklistValues>
+            <picklist>Actions__c</picklist>
+            <values>
+                <fullName>Return Status</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle Off</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle On</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Match_Type__c</picklist>
+            <values>
+                <fullName>Contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Starts With</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Query_Limit__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Status</fullName>
+        <active>true</active>
+        <description>Returns the status of a physical Thing. Can also be automatically triggered by reported readings.</description>
+        <label>Status</label>
+        <picklistValues>
+            <picklist>Actions__c</picklist>
+            <values>
+                <fullName>Return Status</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle Off</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Toggle On</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Match_Type__c</picklist>
+            <values>
+                <fullName>Contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Starts With</fullName>
+                <default>true</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Query_Limit__c</picklist>
+            <values>
+                <fullName>1</fullName>
+                <default>true</default>
+            </values>
+            <values>
+                <fullName>2</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>3</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>4</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>5</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Set_Status_Needs_Value</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(Actions__c, &apos;Set Status&apos;),  ISNULL(Action_Value__c ))</errorConditionFormula>
+        <errorMessage>Must provide a value when setting the status for a non-boolean Thing.</errorMessage>
+    </validationRules>
     <validationRules>
         <fullName>Valid_Status_Formula</fullName>
         <active>true</active>
