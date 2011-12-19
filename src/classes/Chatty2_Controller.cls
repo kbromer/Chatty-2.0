@@ -4,8 +4,8 @@ public without sharing class Chatty2_Controller {
     public void myaction(){
         map<string, string> paramMap = ApexPages.currentPage().getParameters();
         
-        if (paramMap.get('Pin') != null)
-            createInboundMessage(paramMap.get('Pin'));
+        if (paramMap.get('p') != null)
+            createInboundMessage(paramMap.get('p'));
     }    
     
     public void doCallout(string urlMapping, string jsonBody){
