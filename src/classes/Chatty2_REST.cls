@@ -9,7 +9,7 @@ global with sharing class Chatty2_REST {
     }
   
     @HttpPost
-    global static String doPost(RestRequest req, RestResponse res, String address, String pin) {
+    global static String doPost(RestRequest req, RestResponse res, String address, String pin, string value) {
         /*FeedItem fi = new FeedItem();
         fi.ParentId = Chatty2_Constants.getChattySettings().Chatty2_User__c;
         fi.Type = 'TextPost';
@@ -20,6 +20,7 @@ global with sharing class Chatty2_REST {
         
         Inbound_Message__c message = new Inbound_Message__c();
         message.source_address__c = address;
+        message.Value__c = value;
         message.pin__c = pin;
         insert message;
         

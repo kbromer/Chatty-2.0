@@ -4,8 +4,10 @@ public without sharing class Chatty2_Controller {
     public void myaction(){
         map<string, string> paramMap = ApexPages.currentPage().getParameters();
         
-        if (paramMap.get('p') != null)
-            createInboundMessage(paramMap.get('p'));
+        if (paramMap.get('p') != null && paramMap.get('v') != null){
+            createInboundMessage(paramMap.get('p'), parammap.get('v'));
+               
+        }    
     }    
     
     public void doCallout(string urlMapping, string jsonBody){
@@ -33,10 +35,10 @@ public without sharing class Chatty2_Controller {
         system.debug('RESPONSE BODY IS: ' + res.getBody());
     }
     
-    public void createInboundMessage(String pin) {    	 
+    public void createInboundMessage(String pin, string value) {    	 
     	//incoming IP        
         String ipAddress = ApexPages.currentPage().getHeaders().get('X-Salesforce-SIP');
-        String jsonBody = '{"address": ' + '"' +  ipAddress + '", "pin": ' + '"' +  pin + '"}';
+        String jsonBody = '{"address": ' + '"' +  ipAddress + '", "pin": ' + '"' +  pin + '",' + '"value:"' + '"' + value + '"}';
         
         doCallout('Chatty2', jsonBody);
     }
