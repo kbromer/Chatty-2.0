@@ -38,7 +38,34 @@
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
+    <fields>
+        <fullName>Pin__c</fullName>
+        <description>Pin address on the array that a command needs to be invoked on.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Pin address on the array that a command needs to be invoked on.</inlineHelpText>
+        <label>Pin</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Source_Address__c</fullName>
+        <description>IP address of the array that this message originated from.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>IP address of the array that this message originated from.</inlineHelpText>
+        <label>Source Address</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
     <label>Inbound Message</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
     <nameField>
         <displayFormat>Msg-{MMDDYY}-{000000}</displayFormat>
         <label>Inbound Message Name</label>

@@ -231,6 +231,7 @@
     <label>Command</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>NAME</columns>
         <columns>Command_Text__c</columns>
         <columns>Match_Type__c</columns>
         <columns>Response_Text__c</columns>

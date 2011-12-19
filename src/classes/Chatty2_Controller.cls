@@ -4,11 +4,11 @@ public without sharing class Chatty2_Controller {
     public void myaction(){
         map<string, string> paramMap = ApexPages.currentPage().getParameters();
         
-        if (paramMap.get('NName') != null)
-            doCallout(paramMap.get('NName'));
+        if (paramMap.get('Pin') != null)
+            createInboundMessage(paramMap.get('Pin'));
     }    
     
-    public void doCallout(string accountname){
+    public void doCallout(string urlMapping, string jsonBody){
         
         LoginResult lr = authenticateConnection();
         string sessionId = lr.sessionId;
@@ -19,21 +19,26 @@ public without sharing class Chatty2_Controller {
         integer x = endpoint.indexOf('/services');
         endpoint = endpoint.substring(0, x);
         system.debug('PRE ENDPOINT: ' + endpoint);
-        
-        //incoming IP        
-        String ipAddress = ApexPages.currentPage().getHeaders().get('X-Salesforce-SIP');
                 
         Http h = new http();
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(endpoint + '/services/apexrest/Chatty2');
-        system.debug('ENDPOINT: ' + endpoint + '/services/apexrest/Chatty2');        
+        req.setEndpoint(endpoint + '/services/apexrest/' + urlMapping);
+        system.debug('ENDPOINT: ' + endpoint + '/services/apexrest/' + urlMapping);        
         req.setMethod('POST');
         req.setHeader('Authorization', 'OAuth '+sessionID);
         req.setHeader('Content-Type', 'application/json');
-        req.setBody('{"name": ' + '"' +  accountname + '"}');
+        req.setBody(jsonBody);
            
         HTTPResponse res = h.send(req);
         system.debug('RESPONSE BODY IS: ' + res.getBody());
+    }
+    
+    public void createInboundMessage(String pin) {    	 
+    	//incoming IP        
+        String ipAddress = ApexPages.currentPage().getHeaders().get('X-Salesforce-SIP');
+        String jsonBody = '{"address": ' + '"' +  ipAddress + '", "pin": ' + '"' +  pin + '"}';
+        
+        doCallout('Chatty2', jsonBody);
     }
     
     private LoginResult authenticateConnection(){
