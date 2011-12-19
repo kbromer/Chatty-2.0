@@ -1,139 +1,160 @@
 public with sharing class Chatty2_ChattyMain {
-	  
-	/*** CLASS VARS ***/
-	list<ChattyMessage> cmlist = new list<ChattyMessage>();
-	id running_user_id;
-	list<Command__c> commandlist = new list<Command__c>();
-	list<Thing__c> thinglist = new list<Thing__c>();
-	Chatty2_Settings__c ChattySettings = Chatty2_Constants.getChattySettings();
-	string ChattyName = Chatty2_Constants.getChattyName();
-	id ChattyId = Chatty2_Constants.getChattySettings().Chatty2_User__c;
-	
-	/*** CONSTRUCTORS ***/ 
-	
-	//tocheck: this could be done with one sobject constructor, but i think
-	//instanceof has a higher overhead 
-	
-	//handle feeditems with mentions
-	public Chatty2_ChattyMain(list<FeedItem> item_list){
-		getUser(); 
-		//if we're @ mentioning the chatty user
+       
+    /*** CLASS VARS ***/
+    list<ChattyMessage> cmlist = new list<ChattyMessage>();
+    id running_user_id;
+    list<Command__c> commandlist = new list<Command__c>();
+    list<Thing__c> thinglist = new list<Thing__c>();
+    Chatty2_Settings__c ChattySettings = Chatty2_Constants.getChattySettings();
+    string ChattyName = Chatty2_Constants.getChattyName();
+    id ChattyId = Chatty2_Constants.getChattySettings().Chatty2_User__c;
+    Chatty2_Comm c2cc;
+    
+    /*** CONSTRUCTORS ***/ 
+    
+    //tocheck: this could be done with one sobject constructor, but i think
+    //instanceof has a higher overhead 
+    
+    //handle feeditems with mentions
+    public Chatty2_ChattyMain(list<FeedItem> item_list){
+        getUser(); 
+        //if we're @ mentioning the chatty user
         for (FeedItem f : item_list){
-            system.debug('FEEDITEM PARENTID: ' + f.ParentId);
-            system.debug('FEEDITEM BODY: ' + f.Body);
-        
-        
-        	if ((f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
+            if ((f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
+                system.debug('==========Chatty2_Main Handling a new Feed Item');
                 cmlist.add(new ChattyMessage(f, this));
-        	}
+            }
         }
         if (!cmlist.isEmpty()){
             loadCommandsandThings();
-        }		
-	}
+        }       
+    }
     //handle feedcomments with mentions
     public Chatty2_ChattyMain(list<FeedComment> comment_list){
         getUser();
         for (FeedComment f : comment_list){
             if ((f.CommentBody.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
+                system.debug('==========Chatty2_Main Handling a new Feed Comment');
                 cmlist.add(new ChattyMessage(f, this));
             }
         }
         if (!cmlist.isEmpty()){
             loadCommandsandThings();
         }
-    }	    
+    }       
 
     //handle posts to chatty's wall 
-	public Chatty2_ChattyMain(list<User> user_list, map<id, User> oldMap){
+    public Chatty2_ChattyMain(list<User> user_list, map<id, User> oldMap){
         getUser();
         for (User u : user_list){
-        	//only get the feed item if its chatty, the status isn't null
-        	//and its been updated
-        	system.debug('USER STATUS: ' + u.CurrentStatus);
-        	system.debug('CHATTY NAME: ' + Chatty2_Constants.ChattyName);
-        	
-        	if (u.CurrentStatus != null //&& u.CurrentStatus != oldMap.get(u.id).CurrentStatus
-        	   && u.CurrentStatus.startsWith('@' + ChattyName)){
+            //only get the feed item if its chatty, the status isn't null
+            
+            if (u.CurrentStatus != null //&& u.CurrentStatus != oldMap.get(u.id).CurrentStatus
+               && u.CurrentStatus.startsWith('@' + ChattyName)){
                 FeedItem f = [select id, body, createdById, ParentID, createdDate from FeedItem where ParentId = :u.id ORDER BY CreatedDate DESC LIMIT 1];
+                system.debug('==========Chatty2_Main Handling a new User Update');
                 cmlist.add(new ChattyMessage(f, this));
-        	}
-        }	
+            }
+        }   
         if (!cmlist.isEmpty()){
-        	loadCommandsandThings();
+            loadCommandsandThings();
         }
         
-	}
-	//handle incoming messages from the arduino array
-	public Chatty2_ChattyMain(Chatty2_Comm incoming_comm){
-		
-		
-	}
-	
-	/*** PRIVATE METHODS ***/
-	
-	private void getUser(){
-		running_user_id = UserInfo.getUserID();
-	}
-	private void loadCommandsandThings(){		
+    }
+    //handle automated responses to array
+    public Chatty2_ChattyMain(Chatty2_Comm incoming_comm){
+        c2cc = incoming_comm;
+    }
+    
+    /*** PRIVATE METHODS ***/
+    
+    private void getUser(){
+        running_user_id = UserInfo.getUserID();
+    }
+    private void loadCommandsandThings(){       
         commandlist = [select c.Thing__c, c.Status_Formula__c, c.Response_Text__c, 
                     c.RecordTypeId, c.Query__c, c.Match_Type__c, c.Id, 
                     c.Formula_Response__c, c.Command_Text__c, c.Actions__c, 
                     c.Action_Value__c, c.Action_Confirmation__c, Limit_to_User__c,
                     c.Query_Parameters__c, c.Query_Limit__c, c.Query_Order_By__c 
                     From Command__c c];
-	}
-	
-    /*** PUBLIC METHODS ***/	
+    }
+    
+    /*** PUBLIC METHODS ***/    
 
     public void execute(){
-        for (ChattyMessage cm : cmlist){
-            cm.executeResponse();
-        }    	
+        system.debug('==========Chatty2_Main in execute() method');
+        if (cmlist != null){
+        	system.debug('==========Chatty2_Main I have comment to deal with');
+            for (ChattyMessage cm : cmlist){
+                cm.executeStandardResponse();
+            }        
+        }
+        
+        if (c2cc != null){
+            system.debug('==========Chatty2_Main dealing with a triggered reponse');
+            executeTriggeredResponse();
+        }
+    }
+    
+    //handle the callout request from a thing's status change
+    //first post the acknowledgment, then fire the request via C2CComm
+    public void executeTriggeredResponse(){
+    	 
+    	Command__c command_to_execute = c2cc.outboundcommand;
+    	id ParentID = c2cc.Parent_ID;
+    	
+    	insert new FeedComment(
+                        FeedItemId = ParentId,
+                        CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
+                        CommentBody = command_to_execute.Response_Text__c);
+    	
+    	system.debug('==========Chatty2_Main in triggered response');
+    	//create a new comm object
+    	Chatty2_Comm c2cm = new Chatty2_Comm(command_to_execute, ParentID);
+    	c2cm.Execute();
     }
     
     /*** INNER CLASSES ***/
 
     public class ChattyMessage{
-    	
-    	string messagebody;
-    	Chatty2_ChattyMain mydad;
-    	id ParentId;
-    	
-    	public ChattyMessage(FeedComment fc, Chatty2_ChattyMain dad){
-    	    mydad = dad;
+        
+        string messagebody;
+        Chatty2_ChattyMain mydad;
+        id ParentId;
+        
+        public ChattyMessage(FeedComment fc, Chatty2_ChattyMain dad){
+            mydad = dad;
             setupObj(fc);
         }
-    	public ChattyMessage(FeedItem fi, Chatty2_ChattyMain dad){
-    		mydad = dad;
-    		setupObj(fi);
+        public ChattyMessage(FeedItem fi, Chatty2_ChattyMain dad){
+            mydad = dad;
+            setupObj(fi);
         }
-    	public ChattyMessage(Chatty2_Comm c2c, Chatty2_ChattyMain dad){
-    	   mydad = dad;
-    	}
-            	 
-    	public void setupObj(sobject obj){
+        public ChattyMessage(Chatty2_Comm c2c, Chatty2_ChattyMain dad){
+           mydad = dad;
+        }
+                 
+        public void setupObj(sobject obj){
             
-                                                    	       
+                                                               
             if (obj instanceof FeedComment){
-            	FeedComment f = (FeedComment)obj;
+                FeedComment f = (FeedComment)obj;
                 messagebody = f.CommentBody.toLowerCase();
                 ParentId = f.FeedItemId;
-            }	
-    		else if (obj instanceof FeedItem){
+            }   
+            else if (obj instanceof FeedItem){
                 FeedItem f = (FeedItem)obj;
                 messagebody = (string)f.Body.toLowerCase();
-                ParentId = f.Id;    			
-    		}
-    		else{
+                ParentId = f.Id;                
+            }
+            else{
                 throw new Chatty2_Constants.ChattyException();
-    		}
-    	} 
-    	
-    	
-    	
-    	//decide how to respond
-    	public void executeResponse(){
+            }
+        } 
+        
+        //decide how to respond
+        public void executeStandardResponse(){
             
             //list of feedposts in response to the issued commands
             list<FeedComment> responsepostlist = new list<FeedComment>();
@@ -161,10 +182,10 @@ public with sharing class Chatty2_ChattyMain {
             //and filter the ones we want to respond to
             for (Command__c c : mydad.commandlist){
                 if(c.Command_Text__c != null){   
-            	   string ctext = (c.Command_Text__c.toLowerCase()).trim();  
-            	   system.debug('ctext: ' + ctext);
-            	   system.debug('messagebody: ' + messagebody);
-            	
+                   string ctext = (c.Command_Text__c.toLowerCase()).trim();  
+                   system.debug('ctext: ' + ctext);
+                   system.debug('messagebody: ' + messagebody);
+                
                     if (c.Match_Type__c == 'Starts With'){
                         if(messagebody.startsWith(ctext)){
                             matchingcommandcount++;
@@ -173,7 +194,7 @@ public with sharing class Chatty2_ChattyMain {
                     }                
                     
                     else if (c.Match_Type__c == 'Contains'){
-                	    if(messagebody.contains(ctext)){
+                        if(messagebody.contains(ctext)){
                             matchingcommandcount++;
                             commandexecutionlist.add(c);
                         }
@@ -188,7 +209,7 @@ public with sharing class Chatty2_ChattyMain {
             //found no matches, so
             //unrecognized command
             if(commandexecutionlist.isEmpty()){
-            	insert new FeedComment(FeedItemId = ParentId, 
+                insert new FeedComment(FeedItemId = ParentId, 
                 CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
                 CommentBody = Label.UnknownCommand 
                 );
@@ -198,9 +219,9 @@ public with sharing class Chatty2_ChattyMain {
             //decide how to handle the command based on 
             //type and request
             else{
-            	map<id, RecordType> commandRecordTypes = Chatty2_Constants.getCommandRecordTypes();
-            	
-            	for (Command__c c : commandexecutionlist){
+                map<id, RecordType> commandRecordTypes = Chatty2_Constants.getCommandRecordTypes();
+                
+                for (Command__c c : commandexecutionlist){
                    //if its just chat, simply provide the response
                     if (commandRecordTypes.get(c.RecordTypeId).Name == 'Chat'){
                         responsepostlist.add(
@@ -245,16 +266,18 @@ public with sharing class Chatty2_ChattyMain {
         
             if (!responsepostlist.isEmpty()) insert responsepostlist;
                            
-    	    //send the commands out for processing
-    	    list<FeedComment> callOutResponses = new list<FeedComment>();
-    	    if (!calloutlist.isEmpty()){
+            //send the commands out for processing
+            list<FeedComment> callOutResponses = new list<FeedComment>();
+      
+            if (!calloutlist.isEmpty()){
                 for (Command__c c : calloutlist){
                     Chatty2_Comm c2c = new Chatty2_Comm(c, ParentID);
                     c2c.Execute();                    
                 }   
-    	    } 	        	
-    	}//close executeResponse
-    	
+            }               
+        
+        }//close executeResponse
+        
         private FeedComment queryResult(Command__c c){
             
             FeedComment f = new FeedComment();
@@ -302,9 +325,9 @@ public with sharing class Chatty2_ChattyMain {
             else{
                 f.CommentBody = Label.NoQueryResults;
             }
-    		
-    		return f;
-    		
+            
+            return f;
+            
         }//close query response
     }//close ChattyMessage
 }//close Chatty2_Main
