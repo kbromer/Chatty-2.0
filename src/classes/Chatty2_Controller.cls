@@ -38,8 +38,8 @@ public without sharing class Chatty2_Controller {
     public void createInboundMessage(String pin, string value) {    	 
     	//incoming IP        
         String ipAddress = ApexPages.currentPage().getHeaders().get('X-Salesforce-SIP');
-        String jsonBody = '{"address": ' + '"' +  ipAddress + '", "pin": ' + '"' +  pin + '",' + '"value:"' + '"' + value + '"}';
-        
+        String jsonBody = '{"address": ' + '"' +  ipAddress + '", "pin": ' + '"' +  pin + '", ' + '"value":' + '"' + value + '"}';
+        system.debug('JSON BODY: ' + jsonbody);
         doCallout('Chatty2', jsonBody);
     }
     
