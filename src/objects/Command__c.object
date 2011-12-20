@@ -61,23 +61,19 @@
     <fields>
         <fullName>Actions__c</fullName>
         <externalId>false</externalId>
-        <inlineHelpText>What action to perform when the Command Text is used. Options are to toggle the object on/off (if applicable), or to return a reading of the object&apos;s status</inlineHelpText>
+        <inlineHelpText>What action to perform when the Command Text is used. Options are to toggle the object on/off (if applicable), or to set the status of a Thing by providing a value</inlineHelpText>
         <label>Actions</label>
         <picklist>
             <picklistValues>
-                <fullName>Toggle On</fullName>
+                <fullName>On</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Toggle Off</fullName>
+                <fullName>Off</fullName>
                 <default>false</default>
             </picklistValues>
             <picklistValues>
-                <fullName>Return Status</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Set Status</fullName>
+                <fullName>Value</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>
@@ -236,6 +232,8 @@
         <columns>Match_Type__c</columns>
         <columns>Response_Text__c</columns>
         <columns>RECORDTYPE</columns>
+        <columns>Formula_Response__c</columns>
+        <columns>Actions__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -255,19 +253,15 @@
         <picklistValues>
             <picklist>Actions__c</picklist>
             <values>
-                <fullName>Return Status</fullName>
+                <fullName>Off</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Set Status</fullName>
+                <fullName>On</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Toggle Off</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Toggle On</fullName>
+                <fullName>Value</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -314,15 +308,11 @@
         <picklistValues>
             <picklist>Actions__c</picklist>
             <values>
-                <fullName>Return Status</fullName>
+                <fullName>Off</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Toggle Off</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Toggle On</fullName>
+                <fullName>On</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -369,15 +359,11 @@
         <picklistValues>
             <picklist>Actions__c</picklist>
             <values>
-                <fullName>Return Status</fullName>
+                <fullName>Off</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Toggle Off</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Toggle On</fullName>
+                <fullName>On</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -424,15 +410,11 @@
         <picklistValues>
             <picklist>Actions__c</picklist>
             <values>
-                <fullName>Return Status</fullName>
+                <fullName>Off</fullName>
                 <default>false</default>
             </values>
             <values>
-                <fullName>Toggle Off</fullName>
-                <default>false</default>
-            </values>
-            <values>
-                <fullName>Toggle On</fullName>
+                <fullName>On</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -476,7 +458,7 @@
     <validationRules>
         <fullName>Set_Status_Needs_Value</fullName>
         <active>true</active>
-        <errorConditionFormula>AND(ISPICKVAL(Actions__c, &apos;Set Status&apos;),  ISNULL(Action_Value__c ))</errorConditionFormula>
+        <errorConditionFormula>AND(ISPICKVAL(Actions__c, &apos;Value&apos;),  ISNULL(Action_Value__c ))</errorConditionFormula>
         <errorMessage>Must provide a value when setting the status for a non-boolean Thing.</errorMessage>
     </validationRules>
     <validationRules>
