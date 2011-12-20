@@ -17,5 +17,4 @@
     <requireInsecurePortalAccess>false</requireInsecurePortalAccess>
     <siteAdmin>kbromer@chatty2.com</siteAdmin>
     <subdomain>chatty2-developer-edition</subdomain>
-    <urlPathPrefix>chatty2</urlPathPrefix>
 </CustomSite>
