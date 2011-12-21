@@ -85,7 +85,7 @@ public with sharing class Chatty2_ChattyMain {
     public void execute(){
         system.debug('==========Chatty2_Main in execute() method');
         if (cmlist != null){
-        	system.debug('==========Chatty2_Main I have comment to deal with');
+        	system.debug('==========Chatty2_Main I have comment to deal with, number: ' + cmlist.size());
             for (ChattyMessage cm : cmlist){
                 cm.executeStandardResponse();
             }        
@@ -135,9 +135,7 @@ public with sharing class Chatty2_ChattyMain {
            mydad = dad;
         }
                  
-        public void setupObj(sobject obj){
-            
-                                                               
+        public void setupObj(sobject obj){                                                   
             if (obj instanceof FeedComment){
                 FeedComment f = (FeedComment)obj;
                 messagebody = f.CommentBody.toLowerCase();
@@ -233,7 +231,7 @@ public with sharing class Chatty2_ChattyMain {
                     
                     //if its a query, provide a response to the query
                     else if (commandRecordTypes.get(c.RecordTypeId).Name == 'Query'){
-                        responsepostList.add(queryResult(c));                     
+                        responsepostList.addall(queryResult(c));                     
                     }
                     
                     else if (commandRecordTypes.get(c.RecordTypeId).Name == 'Action'){
@@ -278,16 +276,25 @@ public with sharing class Chatty2_ChattyMain {
         
         }//close executeResponse
         
-        private FeedComment queryResult(Command__c c){
-            
-            FeedComment f = new FeedComment();
-            f.FeedItemId = ParentId; 
-            f.CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c;
+        private list<FeedComment> queryResult(Command__c c){
+            list<FeedComment> returnlist = new list<FeedComment>();
             
             if(c.Query__c != null){
                                                                                     
                 string soql = '';
                 soql += c.Query__c;
+                soql = soql.toLowerCase();
+                
+                //extract the field list
+                string q = soql;
+                integer x = soql.indexOf('from');
+                q = q.substring(0, x);
+                system.debug('PLUCKED OUT THE SUBSTRING: ' + q);
+                q = q.replace('select', '');
+                q = q.trim();
+                system.debug('FIELD LIST: ' + q);
+                list<string> fieldlist = q.split(',');
+                
                 if (c.Limit_to_User__c){
                     soql += ' WHERE OwnerId = \'' + UserInfo.getUserID() + '\'';
                 }
@@ -310,23 +317,55 @@ public with sharing class Chatty2_ChattyMain {
                 system.debug('QUERY: ' + soql);
                 list<sobject> objectList = new list<sobject>(); 
                 objectList = database.query(soql);
-                string queryresponse = ' Your requested information: \n ';
+                string queryresponse = '';
                 string baseurl = system.Url.getSalesforceBaseUrl().toExternalForm();
                 
                 //write body
                 for (sobject obj : objectList){
-                    queryresponse += obj.get('Name') + '\n(' + baseurl + '/' + obj.get('id') + ')' + '\n';
-                }           
-                            
-                f.CommentBody = queryresponse;
+                	FeedComment f = new FeedComment();
+                    f.FeedItemId = ParentId; 
+                    f.CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c;
+                    integer counter = 0;
+                    for (string s : fieldlist){
+                    	s = s.trim();
+                    	
+                    	if (s != 'id'){
+                    		if (obj.get(s) != null){
+                                queryresponse += obj.get(s);
+                    		}                                
+                            else{
+                                queryresponse += '-';                    		  
+                            }
+                    	}
+                    	counter++;
+                    	if (counter < fieldlist.size() && queryresponse.length() > 0)
+                    	   queryresponse += ', ';
+                    }
+                    
+                    queryresponse += '\n'; 
+                    queryresponse += baseurl + '/' + obj.get('id') + '\n';
+                    
+                    /*
+                    Chatty2_bitly b = new Chatty2_bitly();
+                    Chatty2_bitly.shorturl s = b.shorten(objurl);
+                    queryresponse += s.url; */
+                    f.CommentBody = queryresponse;
+                    returnlist.add(f);
+                    queryresponse = '';                        
+                }     
             }
             
-            //null query for this command                                                
+            //query didn't return anything         
             else{
-                f.CommentBody = Label.NoQueryResults;
+                returnlist.add(
+                 new FeedComment(
+                    FeedItemId = ParentId, 
+                    CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
+                    CommentBody = Label.NoQueryResults
+                ));
             }
             
-            return f;
+            return returnlist;
             
         }//close query response
     }//close ChattyMessage
