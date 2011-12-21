@@ -202,6 +202,7 @@ public with sharing class Chatty2_Comm {
             list<sobject> translation = database.query('select ' + 
             f.getName() + ' from Sensor_Translator__c where id = \'' + st.id + '\'');
             response += translation[0].get(f.getName());
+            delete st;
             return response;
         }
         
