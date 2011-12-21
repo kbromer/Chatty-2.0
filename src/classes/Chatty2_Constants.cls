@@ -2,7 +2,6 @@ public with sharing class Chatty2_Constants {
 	
     public static Chatty2_Settings__c ChattySettings;
     public static string ChattyName;
-    public static list<User_Thing_URL__c> UserURLs;
     public static map<id, RecordType> commandRecordTypes;
     
     
@@ -29,17 +28,7 @@ public with sharing class Chatty2_Constants {
         }
         return ChattyName;
     }
-    
-    public static list<User_Thing_URL__c> getUserURLs(){
-        if (UserURLs == null){
-            map<string, User_Thing_URL__c> userURLMap = User_Thing_URL__c.getAll();	
-        	for (string s : userURLMap.keySet()){
-                UserURLs.add(userURLMap.get(s));        		
-        	}
-        }    	
-    	return UserURLs;
-    }
-    
+
     public static map<id, RecordType> getCommandRecordTypes(){
     	if (commandRecordTypes == null){
             commandRecordTypes = new map<id, RecordType>([select id, Name from RecordType where sobjecttype = 'Command__c']);    		
