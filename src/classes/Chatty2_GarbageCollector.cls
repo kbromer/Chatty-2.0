@@ -1,4 +1,4 @@
-public class Chatty2_GarbageCollector {
+global class Chatty2_GarbageCollector implements Schedulable {
 
 /** Provides garbage collectin services for Chatty2 **/   
     
@@ -13,5 +13,9 @@ public class Chatty2_GarbageCollector {
         }                	
     }
     
+    
+    global void execute(SchedulableContext SC){
+    	Chatty2_GarbageCollector c2gc = new Chatty2_GarbageCollector();
+    }
 
 }
