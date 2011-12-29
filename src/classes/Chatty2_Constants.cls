@@ -3,6 +3,7 @@ public with sharing class Chatty2_Constants {
     public static Chatty2_Settings__c ChattySettings;
     public static string ChattyName;
     public static map<id, RecordType> commandRecordTypes;
+    public static boolean isExecuting = false;
     
     
     public static Chatty2_Settings__c getChattySettings(){
