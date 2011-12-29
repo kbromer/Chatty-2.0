@@ -18,6 +18,7 @@ public with sharing class Chatty2_ChattyMain {
     //handle feeditems with mentions
     public Chatty2_ChattyMain(list<FeedItem> item_list){
         getUser(); 
+        Chatty2_Constants.isExecuting = true;
         //if we're @ mentioning the chatty user
         for (FeedItem f : item_list){
             if ((f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
@@ -32,10 +33,18 @@ public with sharing class Chatty2_ChattyMain {
     //handle feedcomments with mentions
     public Chatty2_ChattyMain(list<FeedComment> comment_list){
         getUser();
+        Chatty2_Constants.isExecuting = true;
+        map<String, Chatty2_Confirmation_Queue__c> cql = Chatty2_Confirmation_Queue__c.getAll();
         for (FeedComment f : comment_list){
-            if ((f.CommentBody.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
+            if (f.CreatedById != ChattyId && (f.CommentBody.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId)){
                 system.debug('==========Chatty2_Main Handling a new Feed Comment');
                 cmlist.add(new ChattyMessage(f, this));
+            }
+            
+            //handle execution confirmations            
+            else if (f.CreatedById != ChattyId && f.CommentBody.toLowerCase().startsWith('yes') && cql.containsKey(f.FeedItemID)){
+                Chatty2_Comm c2cm = new Chatty2_Comm(cql.get(f.FeedItemID).CommandID__c, f.FeedItemID);
+                c2cm.Execute();
             }
         }
         if (!cmlist.isEmpty()){
@@ -46,6 +55,7 @@ public with sharing class Chatty2_ChattyMain {
     //handle posts to chatty's wall 
     public Chatty2_ChattyMain(list<User> user_list, map<id, User> oldMap){
         getUser();
+        Chatty2_Constants.isExecuting = true;
         for (User u : user_list){
             //only get the feed item if its chatty, the status isn't null
             
@@ -63,6 +73,7 @@ public with sharing class Chatty2_ChattyMain {
     }
     //handle automated responses to array
     public Chatty2_ChattyMain(Chatty2_Comm incoming_comm){
+    	Chatty2_Constants.isExecuting = true;
         c2cc = incoming_comm;
     }
     
@@ -84,7 +95,7 @@ public with sharing class Chatty2_ChattyMain {
 
     public void execute(){
         system.debug('==========Chatty2_Main in execute() method');
-        if (cmlist != null){
+        if (cmlist != null && !cmlist.isEmpty()){
         	system.debug('==========Chatty2_Main I have comment to deal with, number: ' + cmlist.size());
             for (ChattyMessage cm : cmlist){
                 cm.executeStandardResponse();
