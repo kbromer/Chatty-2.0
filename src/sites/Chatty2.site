@@ -6,12 +6,7 @@
     <allowStandardIdeasPages>false</allowStandardIdeasPages>
     <allowStandardLookups>false</allowStandardLookups>
     <allowStandardSearch>false</allowStandardSearch>
-    <authorizationRequiredPage>Unauthorized</authorizationRequiredPage>
-    <bandwidthExceededPage>BandwidthExceeded</bandwidthExceededPage>
     <description>Endpoint for the Chatty2 interface and Arduino</description>
-    <fileNotFoundPage>FileNotFound</fileNotFoundPage>
-    <genericErrorPage>Exception</genericErrorPage>
-    <inMaintenancePage>InMaintenance</inMaintenancePage>
     <indexPage>Chatty2_Listener</indexPage>
     <masterLabel>Chatty2</masterLabel>
     <requireInsecurePortalAccess>false</requireInsecurePortalAccess>
