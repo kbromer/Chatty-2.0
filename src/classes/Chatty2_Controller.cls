@@ -6,37 +6,33 @@ public without sharing class Chatty2_Controller {
         
         if (paramMap.get('p') != null && paramMap.get('v') != null){
             createInboundMessage(paramMap.get('p'), parammap.get('v'));
-               
         }    
     }    
     
     public void doCallout(string urlMapping, string jsonBody){
-        
         LoginResult lr = authenticateConnection();
         string sessionId = lr.sessionId;
         string endpoint = lr.serverUrl;
-        
         //need to truncate the returned endpoint, as it
         //include the SOAP wrapper
-        integer x = endpoint.indexOf('/services');
+        integer x = endpoint.indexOf('/services');//
         endpoint = endpoint.substring(0, x);
         system.debug('PRE ENDPOINT: ' + endpoint);
-                
         Http h = new http();
         HttpRequest req = new HttpRequest();
+        //req.setEndpoint(endpoint + '/services/data/v20.0/sobjects/Inbound_Message__c');
         req.setEndpoint(endpoint + '/services/apexrest/' + urlMapping);
         system.debug('ENDPOINT: ' + endpoint + '/services/apexrest/' + urlMapping);        
         req.setMethod('POST');
-        req.setHeader('Authorization', 'OAuth '+sessionID);
+        req.setHeader('Authorization', 'OAuth '+ sessionID);
         req.setHeader('Content-Type', 'application/json');
         req.setBody(jsonBody);
-           
         HTTPResponse res = h.send(req);
-        system.debug('RESPONSE BODY IS: ' + res.getBody());
+        system.debug('RESPONSE BODY IS: ' + res.getBody()); 
     }
     
     public void createInboundMessage(String pin, string value) {    	 
-    	//incoming IP        
+    	//incoming IP
         String ipAddress = ApexPages.currentPage().getHeaders().get('X-Salesforce-SIP');
         String jsonBody = '{"address": ' + '"' +  ipAddress + '", "pin": ' + '"' +  pin + '", ' + '"value":' + '"' + value + '"}';
         system.debug('JSON BODY: ' + jsonbody);
@@ -47,45 +43,6 @@ public without sharing class Chatty2_Controller {
         Soap wsSOAP = new Soap();
         return wsSOAP.login('kbromer@chatty2.com', 'npsp3333');
     }
-
-
-/*
-    Chatty2_Settings__c ChattySettings = Chatty2_Constants.getChattySettings();
-
-
-    public void myaction(){
-      map<string, string> paramMap = ApexPages.currentPage().getParameters();
-        //check for a valid user
-        if (paramMap.get('uid') instanceof id){
-            id uid = ApexPages.currentPage().getParameters().get('uid');
-            system.debug('UID IS: ' + uid);
-            list<Thing__c> thingList = [select id, Thing_Name__c from Thing__c where User__c = :uid];
-            
-            //create a thing map
-            map<string, Thing__c> thingMap = new map<string, Thing__c>();
-            
-            for (Thing__c t : thingList){
-                thingMap.put(t.Thing_Name__c, t);
-            }
-            
-            //get other params
-            for (string s : paramMap.keySet()){
-                //if the param has a matching thing...
-                if (thingMap.containsKey(s)){
-                    
-                    //temporary
-                    Chatty2_Controller.reportStatus(s, paramMap.get(s));
-                }
-            }
-        }   
-        //invalid uid
-        else{
-            //throw error
-            
-        }
-    }
-*/
-
 
     /*** SOAP Classes ***/
     public class loginResponse_element {
@@ -204,5 +161,29 @@ public without sharing class Chatty2_Controller {
         private String[] apex_schema_type_info = new String[]{'urn:partner.soap.sforce.com','true','false'};
         private String[] field_order_type_info = new String[]{'accessibilityMode','currencySymbol','orgDefaultCurrencyIsoCode','orgDisallowHtmlAttachments','orgHasPersonAccounts','organizationId','organizationMultiCurrency','organizationName','profileId','roleId','userDefaultCurrencyIsoCode','userEmail','userFullName','userId','userLanguage','userLocale','userName','userTimeZone','userType','userUiSkin'};
     }
+    
+     /*  
+        sobjectPartnerSoapSforceCom.sObject_x sobj = new sobjectPartnerSoapSforceCom.sObject_x();
+        sobj.Pin_xc = pin;
+        sobj.Source_Address_xc = ipAddress;
+        sobj.Value_xc = value;
+        sobj.type_x = 'Inbound_Message__c';
+        
+        partnerSoapsforceCom.Soap psp = new partnerSoapsforcecom.Soap();
+        psp.SessionHeader = new partnerSoapsforcecom.SessionHeader_element();
+        LoginResult lr = authenticateConnection();
+        
+      
+        
+        psp.SessionHeader.sessionId = sessionId;
+        psp.endpoint_x = endpoint;
+        list<sobjectpartnersoapsforcecom.sObject_x> nl = new list <sobjectpartnersoapsforcecom.sObject_x>();
+        nl.add(sobj);
+        list<PartnerSoapSforcecom.SaveResult> rs = psp.create(nl);    
+        for (PartnerSoapSforcecom.Saveresult s : rs){
+            
+            system.debug ('The insert was a... ' + s.Success);
+        }
+        */
 
 }
