@@ -47,9 +47,19 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Flex__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF( value(Value__c) &lt; 280, &quot;occupied. Have you gained weight?&quot;, &quot;empty. All clear.&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Flex</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>TMP36F__c</fullName>
         <externalId>false</externalId>
-        <formula>((((VALUE(Value__c) * 0.004882814) - 0.5) * 100) * 1.8) + 32-10</formula>
+        <formula>((((VALUE(Value__c) * 0.00322265625) - 0.33) * 100) * 1.8) + 32</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>TMP36F</label>
         <precision>18</precision>

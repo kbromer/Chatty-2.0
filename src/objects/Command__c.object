@@ -230,6 +230,7 @@
         <columns>NAME</columns>
         <columns>Command_Text__c</columns>
         <columns>Match_Type__c</columns>
+        <columns>Status_Formula__c</columns>
         <columns>Response_Text__c</columns>
         <columns>RECORDTYPE</columns>
         <columns>Formula_Response__c</columns>
