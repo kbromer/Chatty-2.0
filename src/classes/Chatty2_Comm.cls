@@ -68,7 +68,7 @@ public with sharing class Chatty2_Comm {
                       t.Thing_Address__c = :ibm.Pin__c limit 1];
         
         if (t != null){ 
-            string response = t.Short_Description__c + ' is currently reading ';     
+            string response = t.Short_Description__c + ' the value is coming in at ';     
             string value = ibm.Value__c;
             string tv = translateStatus(t.Component_Type__c, value);
             response += tv;
@@ -138,12 +138,10 @@ public with sharing class Chatty2_Comm {
 	private static void handleCommandResponses(Thing__c t, string value, id FIid){
         //get all commands for this thing with a 
         //formula status value
-       
-        list <id> commandsToExecute = new list <id>();
+        
         for (Command__c c : [select c.Status_Formula__c, c.Formula_Response__c, c.Response_Text__c
                             from Command__c c where c.Thing__c = :t.id
-                            and c.Status_Formula__c != null and 
-                            c.Formula_Response__c != null]){
+                            and c.Status_Formula__c != null]){
             
             string statusformula = c.Status_Formula__c;  
             boolean hasConfirmation = false;                         	
@@ -154,8 +152,7 @@ public with sharing class Chatty2_Comm {
                 statusformula = statusformula.trim();
               
                 if (v > decimal.valueOf(statusformula)){                	
-            	    commandsToExecute.add(c.Formula_Response__c);
-                    hasConfirmation = true;
+            	    hasConfirmation = true;
                 }            	   
             }
 
@@ -163,7 +160,6 @@ public with sharing class Chatty2_Comm {
             	statusformula = statusformula.replace('<', '').trim();
                 
                 if (v < decimal.valueOf(statusformula)){                 
-                    commandsToExecute.add(c.Formula_Response__c);
                     hasConfirmation = true;
                 }                   
             }
@@ -172,7 +168,6 @@ public with sharing class Chatty2_Comm {
             	statusformula = statusformula.replace('=', '').trim();
                 
                 if (v == decimal.valueOf(statusformula)){                 
-                    commandsToExecute.add(c.Formula_Response__c);
                     hasConfirmation = true;
                 }                   
             }
@@ -180,8 +175,7 @@ public with sharing class Chatty2_Comm {
             else if (statusformula.startsWith('!=')){
             	statusformula = statusformula.replace('!=', '').trim();
                 
-                if (v != decimal.valueOf(statusformula)){                 
-                    commandsToExecute.add(c.Formula_Response__c);
+                if (v != decimal.valueOf(statusformula)){
                     hasConfirmation = true;
                 }                    
             }
@@ -190,14 +184,17 @@ public with sharing class Chatty2_Comm {
             if (hasConfirmation){
             system.debug('C ID IS: ' + c.id);
             system.debug('C TEXT IS: ' + c.Response_Text__c);
-             FeedComment fc = new FeedComment(
+                FeedComment fc = new FeedComment(
                     FeedItemId = FIId,
                     CreatedById = Chatty2_Constants.getChattySettings().Chatty2_User__c,
                     CommentBody = c.Response_Text__c
-             );
-             insert fc;
-              Chatty2_Confirmation_Queue__c ccq = new Chatty2_Confirmation_Queue__c(Name = FIId, CommandID__c = c.Formula_Response__c);
-                insert ccq;
+                );
+                insert fc;
+                
+                if (c.Formula_Response__c != null){                
+                    Chatty2_Confirmation_Queue__c ccq = new Chatty2_Confirmation_Queue__c(Name = FIId, CommandID__c = c.Formula_Response__c);
+                    insert ccq;
+                }                    
             }
         }
         
