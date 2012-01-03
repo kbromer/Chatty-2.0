@@ -1,0 +1,68 @@
+<apex:page id="Chatty2Settings" tabstyle="Chatty2_Settings__tab" controller="Chatty2_SettingsController">
+
+<apex:PageBlock >
+    <apex:sectionHeader title="Chatty 2" subtitle="Configuration & Settings" />
+    <apex:Pagemessages />
+    <apex:PageBlockSection columns="1">
+        <apex:outputtext value="Configure Chatty2 users and loopback controls through the tabs below" style="font-style:italic;" />
+    </apex:PageBlockSection>
+    <apex:TabPanel switchtype="client">
+    <apex:tab label="User" name="user_settings">
+    <apex:form > 
+    <apex:outputPanel id="existingSettingsList">  
+        <apex:PageBlockSection columns="1" title="User Settings" collapsible="false">
+                <apex:outputField value="{!c2s.Chatty2_User__c}" rendered="{!NOT(editUser)}" />
+                <apex:inputField value="{!c2s.Chatty2_User__c}" rendered="{!editUser}" />
+        </apex:PageBlockSection>
+        <apex:outputPanel style="text-align: center; display: block; margin-left:auto; margin-right:auto;">
+            <apex:commandButton value="Save" rendered="{!editUser}" /> 
+            <apex:commandButton value="Cancel" rendered="{!editUser}"/>
+            <apex:commandButton value="Edit" rendered="{!NOT(editUser)}" action="{!edituser_settings}"/>
+        </apex:outputPanel>
+    </apex:outputPanel>  
+    </apex:form>
+    </apex:tab>
+    
+    
+    <apex:tab label="Loopback Config" name="loopback_config">
+    <apex:form >
+    <apex:outputPanel id="existingSettingsList">  
+        <apex:PageBlockSection columns="1" title="Loopback Settings" collapsible="false">
+            <apex:outputField value="{!c2s.Chatty_Admin_ID__c}" rendered="{!NOT(editUser)}" />
+            <apex:inputField value="{!c2s.Chatty_Admin_ID__c}" rendered="{!editUser}" />
+            <apex:outputField value="{!c2s.Chatty_Admin_PW__c}" rendered="{!NOT(editUser)}" />
+            <apex:inputField value="{!c2s.Chatty_Admin_PW__c}" rendered="{!editUser}" />        
+        </apex:PageBlockSection>
+        <apex:outputPanel style="text-align: center; display: block; margin-left:auto; margin-right:auto;">
+            <apex:commandButton value="Save" rendered="{!editLoopBack}" /> 
+            <apex:commandButton value="Cancel" rendered="{!editLoopBack}" />
+            <apex:commandButton value="Edit" rendered="{!NOT(editLoopBack)}" action="{!editloopback_config}" />
+        </apex:outputPanel>
+    </apex:outputPanel>  
+    </apex:form>
+    </apex:tab>
+        
+    
+    
+    </apex:TabPanel>
+
+
+
+
+</apex:PageBlock>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</apex:page>
