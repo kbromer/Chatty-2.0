@@ -6,7 +6,7 @@
     <apex:PageBlockSection columns="1">
         <apex:outputtext value="Configure Chatty2 users and loopback controls through the tabs below" style="font-style:italic;" />
     </apex:PageBlockSection>
-    <apex:TabPanel switchtype="client">
+    <apex:TabPanel switchtype="client" value="{!selectedTab}" id="tabpanel">
     <apex:tab label="User" name="user_settings">
     <apex:form > 
     <apex:outputPanel id="existingSettingsList">  
@@ -15,9 +15,9 @@
                 <apex:inputField value="{!c2s.Chatty2_User__c}" rendered="{!editUser}" />
         </apex:PageBlockSection>
         <apex:outputPanel style="text-align: center; display: block; margin-left:auto; margin-right:auto;">
-            <apex:commandButton value="Save" rendered="{!editUser}" /> 
-            <apex:commandButton value="Cancel" rendered="{!editUser}"/>
-            <apex:commandButton value="Edit" rendered="{!NOT(editUser)}" action="{!edituser_settings}"/>
+            <apex:commandButton value="Save" rendered="{!editUser}" action="{!saveUserSettings}"/>  
+            <apex:commandButton value="Cancel" rendered="{!editUser}" action="{!cancel}"/>
+            <apex:commandButton value="Edit" rendered="{!NOT(editUser)}" action="{!edituser_settings}" rerender="tabpanel"/>
         </apex:outputPanel>
     </apex:outputPanel>  
     </apex:form>
@@ -28,15 +28,15 @@
     <apex:form >
     <apex:outputPanel id="existingSettingsList">  
         <apex:PageBlockSection columns="1" title="Loopback Settings" collapsible="false">
-            <apex:outputField value="{!c2s.Chatty_Admin_ID__c}" rendered="{!NOT(editUser)}" />
-            <apex:inputField value="{!c2s.Chatty_Admin_ID__c}" rendered="{!editUser}" />
-            <apex:outputField value="{!c2s.Chatty_Admin_PW__c}" rendered="{!NOT(editUser)}" />
-            <apex:inputField value="{!c2s.Chatty_Admin_PW__c}" rendered="{!editUser}" />        
+            <apex:outputField value="{!c2s.Chatty_Admin_ID__c}" rendered="{!NOT(editLoopback)}" />
+            <apex:inputField value="{!c2s.Chatty_Admin_ID__c}" rendered="{!editLoopback}" />
+            <apex:outputField value="{!c2s.Chatty_Admin_PW__c}" rendered="{!NOT(editLoopback)}" />
+            <apex:inputField value="{!c2s.Chatty_Admin_PW__c}" rendered="{!editLoopback}" />        
         </apex:PageBlockSection>
         <apex:outputPanel style="text-align: center; display: block; margin-left:auto; margin-right:auto;">
-            <apex:commandButton value="Save" rendered="{!editLoopBack}" /> 
-            <apex:commandButton value="Cancel" rendered="{!editLoopBack}" />
-            <apex:commandButton value="Edit" rendered="{!NOT(editLoopBack)}" action="{!editloopback_config}" />
+            <apex:commandButton value="Save" rendered="{!editLoopBack}" action="{!saveLoopbackConfig}" /> 
+            <apex:commandButton value="Cancel" rendered="{!editLoopBack}" action="{!cancel}" />
+            <apex:commandButton value="Edit" rendered="{!NOT(editLoopBack)}" action="{!editloopback_config}" rerender="tabpanel" />
         </apex:outputPanel>
     </apex:outputPanel>  
     </apex:form>
