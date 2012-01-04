@@ -125,11 +125,10 @@
         <label>All</label>
     </listViews>
     <nameField>
-        <displayFormat>Thing-{00000000}</displayFormat>
-        <label>Thing ID</label>
+        <label>Thing Name</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>false</trackHistory>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Things</pluralLabel>
     <searchLayouts/>

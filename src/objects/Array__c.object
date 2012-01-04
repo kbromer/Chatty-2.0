@@ -55,9 +55,8 @@
         <label>All</label>
     </listViews>
     <nameField>
-        <displayFormat>Array-{000}</displayFormat>
         <label>Array Name</label>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Arrays</pluralLabel>
     <searchLayouts/>
