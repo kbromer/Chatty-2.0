@@ -23,60 +23,95 @@ global with sharing class Chatty2_Callout {
         else{
             throw new Chatty2_Constants.ChattyException();
         }
-        
-        try{
-            Http h = new http();
-            HttpRequest req = new HttpRequest();
-            string endpoint = 'http://' + array_address + '/' + thing_address + 
-            '/' + action;  
-            req.setEndpoint(endpoint);
-            system.debug('ENDPOINT: ' + endpoint);        
-            req.setMethod('POST');
-            req.setHeader('Content-Length', string.valueof(action.length()));
-            HTTPResponse res = h.send(req);
-            
-            if (res.toString().contains('200') && res.toString().contains('OK')){
-                commentbody = c.Action_Confirmation__c;              
+
+        if (Chatty2_Callout.userOwnsArray(array_address)){        
+            try{
+                Http h = new http();
+                HttpRequest req = new HttpRequest();
+                string endpoint = 'http://' + array_address + '/' + thing_address + 
+                '/' + action;  
+                req.setEndpoint(endpoint);
+                system.debug('ENDPOINT: ' + endpoint);        
+                req.setMethod('POST');
+                req.setHeader('Content-Length', string.valueof(action.length()));
+                HTTPResponse res;
+                if (!system.Test.isRunningTest()){
+                    res = h.send(req); 
+                }
+                if (res.toString().contains('200') && res.toString().contains('OK')){
+                    commentbody = c.Action_Confirmation__c;              
+                }
+                else{
+                    commentbody = 'Uh oh... ' + res.toString();
+                }
             }
-            else{
-                commentbody = 'Uh oh... ' + res.toString();
+            catch (Exception e){
+                commentbody = e.getMessage();             
+            }
+            finally{
+                fc.CommentBody = commentbody;
+                insert fc;
             }
         }
-        catch (Exception e){
-            commentbody = e.getMessage();             
-        }
-        finally{
-          fc.CommentBody = commentbody;
-          insert fc;
-        }
+        else{
+        	fc.CommentBody = label.ArrayNotOwned;
+        	insert fc;
+        }    
     }
     
             
     public static string doGetCallout(string thing_name, string array_address){
         string value ='';
-        try{
-            Http h = new http();
-            HttpRequest req = new HttpRequest();
-            string endpoint = 'http://' + array_address + '/' + thing_name;  
-            req.setEndpoint(endpoint);
-            system.debug('ENDPOINT: ' + endpoint);        
-            req.setMethod('GET');
-            req.setHeader('Content-Type', 'application/json');
-            HTTPResponse res = h.send(req);
-            system.debug('RESPONSE BODY IS: ' + res.getBody());
-            JSONParser parser = JSON.createParser(res.getBody());
+        
+        if (Chatty2_Callout.userOwnsArray(array_address)){
+            try{
+                Http h = new http();
+                HttpRequest req = new HttpRequest();
+                string endpoint = 'http://' + array_address + '/' + thing_name;  
+                req.setEndpoint(endpoint);
+                system.debug('ENDPOINT: ' + endpoint);        
+                req.setMethod('GET');
+                req.setHeader('Content-Type', 'application/json');
+                HTTPResponse res;
+                if (!system.Test.isRunningTest()){
+                    res = h.send(req);	
+                }
+                system.debug('RESPONSE BODY IS: ' + res.getBody());
+                JSONParser parser = JSON.createParser(res.getBody());
             
-            parser.nextToken();    
-            parser.nextValue();
+                parser.nextToken();    
+                parser.nextValue();
             
-            value = parser.getText();
+                value = parser.getText();
+            }
+            catch (Exception e){
+                value = 'ERROR: ' + e.getMessage();
+            }
+            finally{
+                return value;   
+            }
         }
-        catch (Exception e){
-            value = 'ERROR: ' + e.getMessage();
-        }
-        finally{
-            return value;   
-        }
+        else{
+        	value = label.ArrayNotOwned;
+        }            
+            
         return value;
     }
+    
+    
+    private static boolean userOwnsArray(string array_address){
+        set<id> ownerIDs = new set<id>();
+        boolean ownsArray = false;
+        
+    	for (Array_Owner__c a : [select id, User__c from Array_Owner__c where Array__r.Array_Address__c = :array_address]){
+            ownerIDs.add(a.User__c);    		
+    	}
+    	
+    	if (ownerIDs.contains(userInfo.getUserId())){
+    		ownsArray = true;
+    	}
+    	
+    	return ownsArray;
+    }
+    
 }
