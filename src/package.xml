@@ -3,6 +3,7 @@
     <types>
         <members>Chatty2_Callout</members>
         <members>Chatty2_ChattyMain</members>
+        <members>Chatty2_ChattyMain_TEST</members>
         <members>Chatty2_Comm</members>
         <members>Chatty2_Constants</members>
         <members>Chatty2_Controller</members>
