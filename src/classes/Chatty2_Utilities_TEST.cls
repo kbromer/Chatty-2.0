@@ -2,7 +2,8 @@
 public with sharing class Chatty2_Utilities_TEST {
    
     public static void setupAll(){
-        Chatty2_Utilities_TEST.setupTestArrays(1);
+    	Chatty2_Settings__c c2s = Chatty2_Constants.getChattySettings();
+        Chatty2_Utilities_TEST.setupTestArrays(1); 
     }
     
     public static void setupTestArrays(integer num_of_arrays) {
