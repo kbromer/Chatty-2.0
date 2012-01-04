@@ -18,7 +18,7 @@ public with sharing class Chatty2_ChattyMain {
     //handle feeditems with mentions
     public Chatty2_ChattyMain(list<FeedItem> item_list){
         getUser(); 
-        Chatty2_Constants.isExecuting = true;
+        
         //if we're @ mentioning the chatty user
         for (FeedItem f : item_list){
             if ((f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
@@ -27,13 +27,14 @@ public with sharing class Chatty2_ChattyMain {
             }
         }
         if (!cmlist.isEmpty()){
+        	Chatty2_Constants.isExecuting = true;
             loadCommandsandThings();
         }       
     }
     //handle feedcomments with mentions
     public Chatty2_ChattyMain(list<FeedComment> comment_list){
         getUser();
-        Chatty2_Constants.isExecuting = true;
+        
         map<String, Chatty2_Confirmation_Queue__c> cql = Chatty2_Confirmation_Queue__c.getAll();
         for (FeedComment f : comment_list){
             if (f.CreatedById != ChattyId && (f.CommentBody.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId)){
@@ -48,6 +49,7 @@ public with sharing class Chatty2_ChattyMain {
             }
         }
         if (!cmlist.isEmpty()){
+        	Chatty2_Constants.isExecuting = true;
             loadCommandsandThings();
         }
     }       
@@ -55,7 +57,6 @@ public with sharing class Chatty2_ChattyMain {
     //handle posts to chatty's wall 
     public Chatty2_ChattyMain(list<User> user_list, map<id, User> oldMap){
         getUser();
-        Chatty2_Constants.isExecuting = true;
         for (User u : user_list){
             //only get the feed item if its chatty, the status isn't null
             
@@ -67,6 +68,7 @@ public with sharing class Chatty2_ChattyMain {
             }
         }   
         if (!cmlist.isEmpty()){
+        	Chatty2_Constants.isExecuting = true;
             loadCommandsandThings();
         }
         
