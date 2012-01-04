@@ -82,6 +82,23 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Array_Name__c</fullName>
+        <externalId>false</externalId>
+        <formula>IF
+(
+NOT
+(
+ISBLANK(Thing__r.Array__r.Name)
+)
+, Thing__r.Array__r.Name
+, &apos;No Array&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Array Name</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Command_Text__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>The text (case insensitive) that triggers this command when used in Chatter</inlineHelpText>
@@ -235,6 +252,7 @@
         <columns>RECORDTYPE</columns>
         <columns>Formula_Response__c</columns>
         <columns>Actions__c</columns>
+        <columns>Array_Name__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
