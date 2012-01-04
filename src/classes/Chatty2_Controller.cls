@@ -41,7 +41,15 @@ public without sharing class Chatty2_Controller {
     
     private LoginResult authenticateConnection(){
         Soap wsSOAP = new Soap();
-        return wsSOAP.login('kbromer@chatty2.com', 'npsp3333');
+        string un;
+        string pw;
+        
+        Chatty2_Settings__c c2s = Chatty2_Constants.getChattySettings();
+        
+        un = [select username from User where ID = :c2s.Chatty_Admin_ID__c].username;
+        pw = c2s.Chatty_Admin_PW__c;
+        
+        return wsSOAP.login(un, pw);
     }
 
     /*** SOAP Classes ***/
