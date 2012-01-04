@@ -197,26 +197,5 @@ public with sharing class Chatty2_Comm {
                 }                    
             }
         }
-        
-        //map<id, Command__c> cmap = new map<id, Command__c>([select id, Thing__c, RecordTypeID, Response_Text__c from Command__c where id IN :commandsToExecute]);
-     /*   
-        Command__c c;
-        if (!commandsToExecute.isEmpty()){
-            c = [select id, Thing__c, Thing__r.Thing_Address__c, Thing__r.Name, Thing__r.id, RecordTypeID, Response_Text__c from Command__c where id IN :commandsToExecute limit 1];
-            string array_address = [select Array__r.Array_Address__c from Thing__c where id = :c.Thing__r.id].Array__r.Array_Address__c;
-        
-            if (c != null){
-                //insert the response text
-               
-                
-                //insert a new queue object
-               
-            	//Chatty2_Callout.doPostCallout(array_address, c.Thing__r.Thing_Address__c, FIId, c.id, c.Thing__r.Name);
-            }
-        
-        }*/
-        //as long as we have commands to execute
-        //if (cmap.keySet().size() > 0){
-       
 	}
 }

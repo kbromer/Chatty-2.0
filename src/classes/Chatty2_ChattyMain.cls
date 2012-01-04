@@ -252,12 +252,6 @@ public with sharing class Chatty2_ChattyMain {
                         CreatedById = Chatty2_Constants.ChattySettings.Chatty2_User__c,
                         CommentBody = c.Response_Text__c
                         ));
-                        
-                        
-                        /*  NEED TO FIGURE OUT HOW TO CHECK THIS EASILY AND WHERE
-                        Thing__c t = [select t.Array__r.id from Thing__c where t.id = :c.Thing__c];
-                        integer x = [select count() from Array_Owner__c where User__c = :UserInfo.getUserID() and Array__c = :t.Array__r.id];
-                        */
                         calloutlist.add(c);
                     }
                     
@@ -355,11 +349,6 @@ public with sharing class Chatty2_ChattyMain {
                     
                     queryresponse += '\n'; 
                     queryresponse += baseurl + '/' + obj.get('id') + '\n';
-                    
-                    /*
-                    Chatty2_bitly b = new Chatty2_bitly();
-                    Chatty2_bitly.shorturl s = b.shorten(objurl);
-                    queryresponse += s.url; */
                     f.CommentBody = queryresponse;
                     returnlist.add(f);
                     queryresponse = '';                        
