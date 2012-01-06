@@ -14,7 +14,7 @@ users based on a variety of inputs
 * Interact with physical objects directly from Chatter
 
 
-Installation
+Installation 
 ---
 
 * This code can be deployed into a Salesforce organization using Eclipse or Ant
