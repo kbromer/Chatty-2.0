@@ -7,7 +7,7 @@ objects (such as an Arduino) using a REST-based framework.  Chatty can
 also query your Salesforce org, and provide realtime interaction with your 
 users based on a variety of inputs
 
-**Contacts & Organizations**
+**Chatty 2**
 
 * Dynamically respond to changes in your environment status
 * Query Salesforce and get result in your Chatter feed
