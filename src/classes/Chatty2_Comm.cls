@@ -68,7 +68,7 @@ public with sharing class Chatty2_Comm {
                       t.Thing_Address__c = :ibm.Pin__c limit 1];
         
         if (t != null){ 
-            string response = t.Short_Description__c + ' the value is coming in at ';     
+            string response = t.Short_Description__c + ' is currently reading ';     
             string value = ibm.Value__c;
             string tv = translateStatus(t.Component_Type__c, value);
             response += tv;
@@ -124,6 +124,8 @@ public with sharing class Chatty2_Comm {
             f.getName() + ' from Sensor_Translator__c where id = \'' + st.id + '\'');
             response += translation[0].get(f.getName());
             delete st;
+            
+            system.debug('RESPONSE IS =======================' + response);
             return response;
         }
         
