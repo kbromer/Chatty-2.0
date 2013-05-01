@@ -21,6 +21,13 @@ public with sharing class Chatty2_ChattyMain {
         
         //if we're @ mentioning the chatty user
         for (FeedItem f : item_list){
+        	
+        	system.debug('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+        	system.debug('@' + Chatty2_Constants.ChattyName);
+        	system.debug(f.ParentId + ' =? '  + ChattyId);
+        	system.debug(f.createdbyid + ' =? ' + ChattyId);
+        	
+        	
             if ((f.Body.startsWith('@' + Chatty2_Constants.ChattyName) || f.ParentId == ChattyId) && f.CreatedById != ChattyId){
                 system.debug('==========Chatty2_Main Handling a new Feed Item');
                 cmlist.add(new ChattyMessage(f, this));
