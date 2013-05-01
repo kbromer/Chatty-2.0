@@ -86,7 +86,7 @@ global with sharing class Chatty2_Callout {
                 value = parser.getText();
             }
             catch (Exception e){
-                value = 'ERROR: ' + e.getMessage();
+                value = 'ERROR:  ' + e.getMessage();
             }
             finally{
             	system.debug('VALUE IS==============================' + value);
