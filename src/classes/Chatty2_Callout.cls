@@ -21,7 +21,7 @@ global with sharing class Chatty2_Callout {
             action = c.Action_Value__c;
         }
         else{
-        	//throw exceptio
+        	//throw exception
             throw new Chatty2_Constants.ChattyException();
         }
 
