@@ -10,7 +10,7 @@ global with sharing class Chatty2_Callout {
         FeedComment fc = new FeedComment(FeedItemID = ParentId, 
             CreatedByID = Chatty2_Constants.getChattySettings().Chatty2_User__c            
          );
-        
+        //change
         if (c.Actions__c == 'On'){
             action = 'HIGH';
         }
