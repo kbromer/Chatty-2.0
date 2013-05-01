@@ -88,13 +88,14 @@ global with sharing class Chatty2_Callout {
                 value = 'ERROR: ' + e.getMessage();
             }
             finally{
+            	system.debug('VALUE IS==============================' + value);
                 return value;   
             }
         }
         else{
         	value = label.ArrayNotOwned;
         }            
-            
+                    
         return value;
     }
     
